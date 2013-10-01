@@ -1,0 +1,22 @@
+/**
+ * Byblio search engine
+ * home page
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+
+@CHARSET "UTF-8";
+
+.home{
+	padding: 150px 0px 0px 0px;
+}
+
+
+.searchImage{
+	width: 310px;
+	height: 200px;
+	margin: 0px auto 0px auto;
+	background: url(../../../images/home/monster_search.png) no-repeat 0px 0px;
+}

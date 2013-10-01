@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Byblio.
+ * Search, CMS
+ * partial view helper to format CMS delete content form
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// escape if no form
+	if(!$this->form){
+		return;
+	}
+	
+	// ref form
+	$form = $this->form;
+	
+	// prepare
+	$form->prepare();
+	
+	// ref input filter and validator
+	//$filter = $form->getInputFilter();
+	
+	// opening html
+	$openStr = "<div class=\"deleteContent_form\">";
+	$formOpenStr = $this->form()->openTag($form);
+	
+	// form name
+	$formNameStr = $this->formRow($form->get('formname'));
+	
+	// csrf
+	$csrfStr = $this->formRow($form->get('deleteContentCsrf'));
+	
+	// content id div
+	$contentIdStr = "<div class=\"row\">"
+				."<div class=\"contentId\">"
+					.$this->formRow($form->get('cms-delete-contentId'))
+					."<div class=\"label\">" .$this->translate('Content id') ."</div>"
+				."</div>"
+				."<div class=\"clearFloats\"></div>"
+				."</div>";
+	
+	// authorisation - alpha
+	$alphaStr = "<div class=\"row\">"
+			."<div class=\"authAlpha\">"
+				.$this->formRow($form->get('cms-delete-alpha'))
+				."<div class=\"label\">" .$this->translate('Auth: Alpha') ."</div><div class=\"clearFloats\"></div>"
+			."</div></div>";
+	
+	// authorisation - beta
+	$betaStr = "<div class=\"row\">"
+			."<div class=\"authBeta\">"			
+				.$this->formRow($form->get('cms-delete-beta'))
+				."<div><div class=\"label\">" .$this->translate('Auth: Beta') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	
+	
+	// submit div
+	$submitStr = "<div class=\"row\"><div class=\"submit\">"
+			.$this->formRow($form->get('cms-delete-submit'))
+			."</div></div>";
+	
+	
+	// close tag
+	$formCloseStr = $this->form()->closeTag();
+	
+	// assemble
+	$formStr = $openStr .$formOpenStr .$csrfStr .$formNameStr 
+		.$contentIdStr
+// 		.$alphaStr
+// 		.$betaStr
+		.$submitStr
+	.$formCloseStr ."</div>";
+	
+	// echo
+	echo $formStr;
+	
+?>

@@ -1,0 +1,347 @@
+<?php
+
+/**
+ * Byblio
+ * View script
+ * Account sign up - select account and options
+ *
+ * module/Useraccount/view/useraccount/signup/home.phtml
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// ui info
+	$ui_settingsInfo = $sm->get('ui_settingsInfo');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/signup.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// javascript
+	$this->headScript()->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/useraccount/signup-pwdwidget.1.0.js', 'text/javascript') // password checker functionality
+	->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/ui_general/voucher.1.0.js', 'text/javascript') // voucher
+						->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/useraccount/signup.1.0.js', 'text/javascript'); // page functionality
+	
+	
+	// sign up form
+	$signupForm = $this->signupForm;
+	$signupFormNameStr = "";
+	if($signupForm){
+		$signupForm->setAttribute('action', $this->url('signup')); // set action on submit
+		
+		// processing flags
+		$formSubmitted_signup = $this->formSubmitted_signup;
+		$signupEmailInUse = $this->signupEmailInUse;
+		$createdNewUser = $this->createdNewUser;
+		$signupEmail = $this->signupEmail;
+		$signupFirstName = $this->signupFirstName;
+		$failedToCreateNewUser = $this->failedToCreateNewUser;
+		
+		// form name
+		$signupFormNameStr = $signupForm->formName;
+		
+	} else {
+		$formSubmitted_signup = false;
+		$signupEmailInUse = false;
+		$createdNewUser = false;
+		$signupEmail ="";
+		$signupFirstName = "";
+	}
+	
+	// tabs content
+	$tabsContentUserAccount = $sm->get('tabsContentUserAccount');
+	
+	// user logged in
+	$loggedIn = $this->loggedIn;
+	
+	// user info
+	$userInfo = $this->userInfo;
+	
+	// page tabs
+	if($loggedIn){
+		$tabsInfo_Page = $tabsContentUserAccount->getTabsInfo('signup-page-loggedin', $this);
+	} else {
+		$tabsInfo_Page = $tabsContentUserAccount->getTabsInfo('signup-page', $this);
+	}
+	
+	// account options
+	$acOptionInfo = $this->acOptionInfo;
+	
+	// ** info for signup.js:
+	if(!is_array($this->pageSettings)){
+		$pageSettings = array();
+	} else {
+		$pageSettings = $this->pageSettings;
+	}
+	// place holder. Note: page settings passed by reference
+	$this->placeholder('pageSettings')->pageSettings = &$pageSettings;
+	
+	// ** add in html info:
+	if(!key_exists('html', $pageSettings)){
+		$pageSettings['html'] = array();
+	}
+	
+	// ids and classes of dialogue boxes
+	$pageSettings['html']['dialogueBox'] = array();
+
+	// sign up form
+	$jsSignupForm = array();
+	
+	$idList = array();
+	$signupId = 'signupPanel';
+	$idList['signupPanel'] = $signupId;
+	$jsSignupForm['idList'] = $idList;
+	
+	
+	// class list
+	if(is_array($signupForm->classList)){
+		$classList = $signupForm->classList;
+	} else {
+		$classList = array();
+	}
+	$classList['allHeadings'] = 'allHeadings';
+	$classList['heading'] = 'heading';
+	$classList['totalToPay'] = 'totalToPay';
+	$classList['selectedACandOptions'] = 'selectedACandOptions';
+	$classList['selectedSummary'] = 'selectedSummary';
+	$classList['voucher'] = 'voucher';
+	$classList['voucherInfo'] = 'voucher-info';
+	$classList['voucherCheck'] = 'voucher-check';
+	$classList['voucherOK'] = 'yes';
+	$classList['voucherNotOK'] = 'no';
+	$classList['voucherInProgress'] = 'inProgress';
+	$classList['gpAbout'] = 'gp_about';
+	$classList['gpEmailPwd'] = 'gp_emailPwd';
+	$jsSignupForm['classList'] = $classList;
+	
+	// data tags
+	$dataList = array();
+	$dataList['acSelectedName'] = 'user-signup-accountNum';
+	$dataList['acOptionName'] = 'user-signup-acoption';
+	$dataList['emailName'] = 'user-signup-email';
+	$dataList['submitBtn'] = 'user-signup-submit';
+	$dataList['acNum'] = 'acnum';
+	$dataList['acSubOption'] = 'suboption';
+	$dataList['formName'] = $signupFormNameStr;
+	$dataList['voucherNumChars'] = 'numchars';
+	$dataList['voucherRef'] = 'reference';
+	$jsSignupForm['dataList'] = $dataList;
+	
+	// key words
+	$words = array();
+	$signStr = $this->translate('Sign up');
+	$words['submitSignup'] = $signStr;
+	$payStr = $this->translate('Continue to payment');
+	$words['submitPay'] = $payStr;
+	$freeStr = $this->translate('Free');
+	$words['free'] = $freeStr;
+	$jsSignupForm['words'] = $words;
+	
+	$pageSettings['html']['signupForm'] = $jsSignupForm; // sign up form page settings
+	
+	
+	
+	
+	// tabs
+	$pageSettings['html']['allTabs'] = array();
+	$tabs1 = array();
+	$tabs1['id'] = 'pageTabsPanels';
+	$pageSettings['html']['allTabs'][] = $tabs1;
+	
+	// cookie name
+	$cookieName = $ui_settingsInfo->getCookieName('useraccount-signup');
+	$pageSettings['cookieName'] = $cookieName;
+	
+	
+	// account info
+	$allAccountInfo = $this->allAccountInfo;
+	$accountTypesById = $allAccountInfo['byId'];
+	$accountTypesByType = $allAccountInfo['byType'];
+	
+	$accountNames = $this->accountNames;
+	
+	// name of user's current account
+	$userAcName = "";
+	if($loggedIn){
+		$acTypeId = $userInfo['acTypeId'];
+		if(key_exists($acTypeId, $accountTypesById)){
+			$acInfo = $accountTypesById[$acTypeId];
+			$userAcName = $acInfo['name'];
+		}
+	}
+?>
+
+<div class="signup">
+
+	
+	<div class="pageBorder_pageTabs">
+	
+		<div id="pageTabsPanels" class="allPages_pageTabs" style="display:none;"><!-- all page tab panels -->
+		
+			<!-- tabs of pageTabsPanels -->
+			<?php echo $this->partial('tabsHtml', array('tabsInfo'=>$tabsInfo_Page)); ?>
+		
+			<div class="page">
+				<div class="page_1" id="tab-0"><!-- page 1, welcome and sign up -->
+		
+					<div>
+						
+						<div class="col_1"><!-- account options -->
+						
+							<?php 
+							echo $this->partial('useraccount-accountOptions');
+							?>
+							
+						</div><!--  end col_1 -->
+					
+					
+						<div class="col_2" id="<?php echo $signupId; ?>"><!-- sign up -->
+							<div class="border">
+							
+								<!-- headings -->
+								<div class="allHeadings">
+									<!-- no account selected -->
+									<div class="option_1 heading" data-acnum="0" style="display: none;">&nbsp;</div>
+									
+									<!--  all accounts -->
+									<?php 
+									
+									$optionNum = 0;
+									$optionClassCore = "option_";
+									
+									foreach($accountTypesById as $acType => $acInfo){
+
+										// option num
+										$optionNum++;
+										
+										// name
+										$acName = $acInfo['name'];
+										
+										// id
+										$acId = $acInfo['id'];
+										
+										// class
+										$optionClass= $optionClassCore .$optionNum;
+										
+										// heading div
+										$divStr = "<div class=\"" .$optionClass ." heading\" data-acnum=\"" .$acId ."\" style=\"display: none;\">" .$acName ."</div>";
+										
+										echo $divStr;
+									}
+										
+									?>
+																		
+								
+								</div>
+								<div class="form">
+									<?php 
+										// sign up form, not logged in
+										if(!$loggedIn){
+											echo $this->partial('signupForm', array('form'=>$signupForm, 'formSubmitted'=>$formSubmitted_signup));
+										} else {
+											// logged in intro
+											$intro1Str = "<p>" .$this->translate('This is a group account that has multiple users. You will be an administrator of this account, and you will keep your personal') ." " .$userAcName ." " .$this->translate('account (we make sure they are separate to preserve your privacy).') ."</p>";
+											$intro2Str = "<p>" .$this->translate('After you have created a new account, you can invite other people to become additional administrors, library managers and general users of the account.') ."</p>";								
+											$allIntro = "<div class=\"gp_about\" style=\"display:none;\">" .$intro1Str .$intro2Str ."</div>";
+
+											// form
+											$form = $this->partial('signupLoggedInForm', array('form'=>$signupForm, 'formSubmitted'=>$formSubmitted_signup));
+											
+											// all
+											$allStr = $form .$allIntro;
+											
+											echo $allStr;
+											}
+									?>
+									
+									
+											
+										
+									
+								</div>
+							
+								
+							</div><!-- end border -->
+							
+							<!-- total amount to pay -->
+							<div class="selectedSummary" style="display:none;">
+								<div class="selectedACandOptions"></div><!-- selected options and pricing -->
+								<div class="totalToPay"></div><!-- total price -->
+							</div>
+							<div class="clearFloats"></div>
+							
+							<?php if(!$loggedIn):?>
+							<div class="info">
+								<div class="emailWarning"><?php echo $this->translate('The email address needs to be yours - we\'ll send you an activation email.')?></div>					
+								<div class="privacy"><?php echo $this->translate('Your details are private - we don\'t sell them to advertisers or anybody else.')?></div>					
+								
+							</div>
+							<?php endif?>
+						</div> <!--  end col_2 -->
+					
+			
+					</div>
+					
+					<div class="clearFloats"></div>
+					
+				</div><!-- end page_1 -->
+			</div><!-- end page -->
+			
+			
+			<div class="page">
+				<div class="page_2" id="tab-1"><!-- page 2, account features and pricing -->
+			
+				<!-- account pricing page -->
+				<?php 
+				echo $this->partial('useraccount-accountPricing', array('acOptionInfo'=>acOptionInfo, 'allAccountInfo'=>$allAccountInfo));
+				?>
+					
+		
+				</div><!--  end page_2 -->
+			</div><!--  end page -->
+			
+		</div><!-- end pageTabsPanels -->
+		
+		
+		
+		<!-- dialogue boxes, called as a result of processing the user-submitted form -->
+		<?php 
+		if($signupEmailInUse){
+			echo $this->partial('dialogueSignupEmailInUse', array('email'=>$signupEmail));
+		}
+			
+		if($createdNewUser){		
+			echo $this->partial('dialogueCreatedNewUser', array('email'=>$signupEmail, 'firstName'=>$submitFirstName));
+		}
+			
+		if($failedToCreateNewUser){			
+			echo $this->partial('dialogueFailedToCreateNewUser');
+		}
+		?>
+			
+		
+		
+	</div><!-- /pageborder -->
+	
+</div><!--  /signup -->
+	
+		
+<?php	
+
+	// page settings for js
+	$pageSettings = $this->placeholder('pageSettings')->pageSettings;
+	$pageSettingsJson = json_encode($pageSettings);
+	
+	// echo out
+	$script = "<script type=\"text/javascript\">var HamelSignupInfo =" .$pageSettingsJson .";</script>";
+	echo $script;
+?>

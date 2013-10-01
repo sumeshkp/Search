@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * Byblio
+ * Useraccount, home page
+ * Loads a group or user view partial
+ * 
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	
+	// info
+	$homeType = $this->homeType;
+	$loggedIn = $this->loggedIn;
+	$userInfo = $this->userInfo;
+	$UIInfo = $this->UIInfo;
+	$pageInfo = $this->pageInfo;
+	
+	
+	// include view script 
+	if($homeType =='user'){
+		echo $this->partial('userHomePage', array('loggedIn'=> $loggedIn, 'userInfo'=>$userInfo, 'UIInfo'=>$UIInfo, 'pageInfo'=> $pageInfo));
+	} else{
+		echo $this->partial('groupHomePage', array('loggedIn'=> $loggedIn, 'userInfo'=>$userInfo, 'UIInfo'=>$UIInfo, 'pageInfo'=> $pageInfo));
+	}
+?>

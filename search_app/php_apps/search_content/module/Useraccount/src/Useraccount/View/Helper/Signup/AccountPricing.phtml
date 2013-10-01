@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * Byblio
+ * Account pricing.
+ * Partial view helper
+ *  module/Useraccount/src/Useraccount/View/Helper/Signup/AccountPricing.phtml
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	
+	// page settings, passed by reference 
+	$pageSettings = &$this->placeholder('pageSettings')->pageSettings;
+	
+	// ** html info for js
+	if(!key_exists('html', $pageSettings)){
+		$pageSettings['html'] = array();
+	}
+	
+	// info for js
+	$acPricing = array();
+	
+	
+?>
+
+
+<div class="accountPricing">
+
+	<div class="info">
+		<p><?php echo $this->translate('These are the account options for byblio. Roll over')?>
+		<span class="rollOver_icon"> </span>
+		<?php echo $this->translate('for more information.')?>
+		</p>
+	</div>
+	
+	
+</div><!-- end accountPricing -->
+
+	

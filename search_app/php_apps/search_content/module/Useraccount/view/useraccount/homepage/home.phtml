@@ -1,0 +1,27 @@
+<?php
+
+	// module/Useraccount/home
+	
+	$dbSessionId = $this->dbSessionId;
+	
+	$this->headScript()->appendFile($this->basePath(PUBLIC_FOLDER) . '/../../php_apps/site_main/vendor/Hamel/library/Hamel/Authenticate/Test/Javascript/AuthTest.js', 'text/javascript'); // manage functionality
+	
+?>
+
+	<h1><?php echo $this->escapeHtml('User remote auth test page'); ?></h1>
+	<p>Click the submit button to send 'dbSessionid' by ajax</p>
+	
+	<br/>
+	
+	<form id="userhometest" method="post">
+		<input type="text" id="userhometestDB" value="<?php echo $dbSessionId;?>"/>Current db session id: <?php echo $dbSessionId;?>
+		<button>Send id</button> 
+	</form>
+	
+	<br/>
+	
+	<div>
+		<h2>Response to Ajax call</h2>
+			<div id="userhometestResults"></div>
+	</div>
+	

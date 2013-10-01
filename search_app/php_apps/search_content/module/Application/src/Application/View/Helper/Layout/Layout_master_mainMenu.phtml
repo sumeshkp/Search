@@ -1,0 +1,316 @@
+<?php 
+/**
+ * Byblio
+ * Search engine
+ * Main menu for the Master layout
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+
+	// current uri
+	$currentURI = $_SERVER["REQUEST_URI"];
+
+	// user info and logged in flag
+	$userInfo = $this->userInfo;
+	$loggedIn = $this->loggedIn;
+	$homeURIInfo = $this->homeURIInfo;
+	
+?>
+
+<div class="menu" id="menu_site">
+	<?php
+	
+	// current route
+	$route = $this->routeName();
+	if(!isset($route)){
+		$route = 'home';
+	}
+	
+	// current controller
+	$controller = $this->controllerName();
+	if(!isset($controller)){
+		$controller = 'index';
+	}
+	
+	
+	
+	// site menu items:
+	$menuList = array();
+	
+	// menu spacer (used in options)
+	$menuOptionSpacer = array('class'=>'optionSpacer');
+	
+	// byblio home page:
+	$linkRoute = 'home';
+	$linkController = 'Application\Controller\Index';
+ 	$linkNameStr = $this->translate('byblio search');
+ 	if($controller == $linkController){
+ 		$linkClass = 'inactive home_0';
+ 		$linkStr = "";
+ 	} else {
+ 		$linkClass = 'home_1';
+ 		$linkStr = $this->url($linkRoute);
+ 	};
+ 	
+ 	// add to list
+ 	$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr);
+ 	
+ 	
+ 	
+ 	
+ 	// log in:
+ 	if(!$loggedIn){ // if not logged in
+ 	
+ 		$linkNameStr = $this->translate('Log in');
+ 		$linkStr = null;
+ 			
+ 		// if on the log in page
+ 		if($route == 'useraccount-login'){
+ 			// set link class only
+ 			$linkClass = 'inactive';
+ 	
+ 			// add to list
+ 			$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr);
+ 	
+ 		} else {
+ 			$linkClass = 'menu_8';
+ 				
+ 			// log in form all info
+ 			$loginFormAll = $this->menuLoginForm;
+ 	
+ 			if(is_array($loginFormAll)){
+ 				// form (no captcha)
+ 				$loginForm = null;
+ 				if(key_exists('form', $loginFormAll)){
+ 					$loginForm = $loginFormAll['form'];
+ 				}
+ 				// form (captcha)
+ 				$loginFormCaptcha = null;
+ 				if(key_exists('formCaptcha', $loginFormAll)){
+ 					$loginFormCaptcha = $loginFormAll['formCaptcha'];
+ 				}
+ 				// info
+ 				$loginInfo = array();
+ 				if(key_exists('info', $loginFormAll)){
+ 					$loginInfo = $loginFormAll['info'];
+ 				}
+ 				 
+ 				// submitted?
+ 				$formSubmitted = false;
+ 				if(key_exists('formSubmitted', $loginInfo)){
+ 					$formSubmitted = $loginInfo['formSubmitted'];
+ 				}
+ 				// show form?
+ 				if($formSubmitted){
+ 					$showForm = true;
+ 				} else {
+ 					$showForm = false;
+ 				}
+ 					
+ 				// login form html
+ 				$loginFormHTML = $this->partial('loginForm', array('formNoCaptcha'=>$loginForm, 'formCaptcha'=>$loginFormCaptcha, 'loginInfo'=>$loginInfo));
+ 	
+ 				if($loginFormHTML){
+ 					$menuOptions = array(array('text'=>$loginFormHTML));
+ 				} else {
+ 					$menuOptions = null;
+ 				}
+ 				 
+ 				// add to list
+ 				$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr, 'menuOptions'=>$menuOptions, 'display'=>$showForm);
+ 			}
+ 		}
+ 	}
+ 	
+ 	
+ 	
+ 	
+ 	
+  	// web app test - search content:
+ 	$linkRoute = 'webApp-test-search';
+ 	$linkStr = $this->url($linkRoute);
+ 	$linkNameStr = $this->translate('Web App - search');
+ 	
+ 	if($route == $linkRoute){
+ 		$linkClass = 'inactive';
+ 		$linkStr = "";
+ 	} else {
+ 		$linkClass = 'menu_5';
+ 	};
+ 	// add to list
+ 	$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr);
+ 
+ 	
+  	// CMS test - add and update content to search nidex:
+ 	$linkRoute = 'cms-test-addcontent';
+ 	$linkStr = $this->url($linkRoute);
+ 	$linkNameStr = $this->translate('CMS - add &amp; update');
+ 	
+ 	if($route == $linkRoute){
+ 		$linkClass = 'inactive';
+ 		$linkStr = "";
+ 	} else {
+ 		$linkClass = 'menu_3';
+ 	};
+ 	// add to list
+ 	$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr);
+ 
+ 
+  	// CMS test - delete content from index:
+ 	$linkRoute = 'cms-test-deletecontent';
+ 	$linkStr = $this->url($linkRoute);
+ 	$linkNameStr = $this->translate('CMS - delete content');
+ 	
+ 	if($route == $linkRoute){
+ 		$linkClass = 'inactive';
+ 		$linkStr = "";
+ 	} else {
+ 		$linkClass = 'menu_4';
+ 	};
+ 	// add to list
+ 	$menuList[] = array('class'=>$linkClass, 'link'=>$linkStr, 'text'=>$linkNameStr);
+ 
+ 	
+ 	
+ 	
+	// create menu
+	$spacer = "<div class=\"spacer\">|</div>";
+	$menuStr = "<div id=\"menu_site_menu\">";
+	
+	foreach($menuList as $menuInfo){
+		
+		// text
+		if(key_exists('text', $menuInfo)){
+			$text = $menuInfo['text'];
+		} else {
+			$text = "";
+		}
+		
+		// class
+		if(key_exists('class', $menuInfo)){
+			$class = $menuInfo['class'];
+			$classStr = " class=\"menuItem " .$class ."\"";
+		} else {
+			$classStr = " class=\"menuItem\"";
+		}
+		
+		// link
+		$linkStr = $text;
+		$linkRef = "";
+		if(key_exists('link', $menuInfo)){
+			$link = $menuInfo['link'];
+			if($link !="" && is_string($link)){
+				$linkStr = "<a href=\"" .$link ."\">" .$text ."</a>";
+				$linkRef = " route=\"" .$link ."\"";
+			}
+		} 
+		
+		// display options
+		$display = false;
+		if(key_exists('display', $menuInfo)){
+			$display = $menuInfo['display'];
+		}
+		
+		// menu options
+		$menuOptionsStr = "";
+		if(key_exists('menuOptions', $menuInfo)){
+			$menuOptions = $menuInfo['menuOptions'];
+			
+			if(is_array($menuOptions)){
+				
+				// display str
+				if($display){
+					$displayStr = " style=\"display:block;\"";
+				} else {
+					$displayStr = " style=\"display:none;\"";
+				}
+				
+				// option div
+				$menuOptionsStr = "<div class=\"options\"" .$displayStr .">";
+				
+				foreach($menuOptions as $option){
+					// text
+					if(key_exists('text', $option)){
+						$opText = $option['text'];
+					} else {
+						$opText = "";
+					}
+					
+					// class
+					$opClassStr = $classStr; // use main class as default
+					if(key_exists('class', $option)){
+
+						$opClass = $option['class'];
+						
+						if($opClass !=""){
+
+							switch($opClass){
+								case 'optionSpacer':
+								case 'sectionHeading':
+									// class only
+									$opClassStr = " class=\"" .$opClass ."\"";
+								break;
+								
+								default:
+									// add in menu item class
+									$opClassStr = " class=\"menuItem " .$opClass ."\"";
+								break;
+							}
+						}
+					}
+					
+					// link
+					$opLinkStr = $opText;
+					$opLinkRef = "";
+					if(key_exists('link', $option)){
+						$opLink = $option['link'];
+						if($opLink !=""){
+							$opLinkStr = "<a href=\"" .$opLink ."\">" .$opText ."</a>";
+							$opLinkRef = " route=\"" .$opLink ."\"";
+						}
+					}
+					
+					// option 
+					$optionStr = "<div" .$opClassStr .$opLinkRef .">" .$opLinkStr ."</div>";
+					
+					// add option
+					$menuOptionsStr .= $optionStr;
+				}	
+				// close all options string
+				$menuOptionsStr .= "</div>";
+				
+			}
+			
+		} else { // no options
+			$menuOptions = null;
+		}
+		
+		// create menu item string		
+		$menuItemStr = "<div class=\"menuItemAndOptions\"" .$controllerStr .">"
+						.$spacer
+						."<div" .$classStr .$linkRef .">" .$linkStr ."</div>"
+						."<div class=\"clearFloats\"></div>"
+						.$menuOptionsStr 
+						."</div>";
+			
+		
+		// add to menu string
+		$menuStr .= $menuItemStr;
+		
+	}
+	
+	// close div
+	$menuStr .= "</div>";
+
+	
+	// print menu string
+	echo $menuStr;
+	?>
+</div><!-- end menu -->
+
+<div class="clearFloats"></div>
+

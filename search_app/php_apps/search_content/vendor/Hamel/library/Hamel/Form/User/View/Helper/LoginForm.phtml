@@ -1,0 +1,258 @@
+<?php
+
+/**
+ * Byblio.
+ * partial view helper to format login form
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// escape if no form
+	if(!$this->formNoCaptcha){
+		return;
+	}
+	
+	
+	// login info
+	$loginInfo = $this->loginInfo;
+	$failedLoginInfo = $loginInfo['failedLoginInfo'];
+	$loginFailed = $loginInfo['loginFailed'];
+	$accountLocked = $loginInfo['accountLocked'];
+	$accountNotActive = $loginInfo['accountNotActive'];
+	$nextTimeStr = $loginInfo['loginNextTimeStr'];
+	$loginEmail = $loginInfo['loginEmail'];
+	$failedLoginInfo = $loginInfo['failedLoginInfo'];
+	
+	// need to warn user as close to being locked out?
+	$warnUser = false;
+	if(key_exists('warn', $failedLoginInfo)){
+		$warnUser = $failedLoginInfo['warn'];
+	}
+	
+	$useCaptcha = false;
+	if(key_exists('useCaptcha', $failedLoginInfo)){
+		$useCaptcha = $failedLoginInfo['useCaptcha'];
+	}
+	
+	// use captcha form if need to warn user
+	if($warnUser){
+		// flag
+		$useCaptcha = true;
+	}
+	
+ 	// user captcha form - only use if 'user' has failed to log in (help prevent hacking)
+	if($useCaptcha){
+		// ref form
+		$form = $this->formCaptcha;
+	} else {
+		// ref form
+		$form = $this->formNoCaptcha;
+	}
+	
+	
+	
+	// prepare
+	$form->prepare();
+	
+
+	
+	// ref input filter and validator
+	$filter = $form->getInputFilter();
+	
+	// form html
+	$formOpenStr = $this->form()->openTag($form);
+	
+	// form name
+	$formNameStr = $this->formRow($form->get('formname'));
+	
+	// csrf
+	$csrfStr = $this->formRow($form->get('loginCsrf'));
+	
+	// email div
+	$email = $filter->get('login-email');
+	$currentValue = $email->getValue();
+	
+	if(!$currentValue){
+		$emailValid = true;
+	} else {
+		$emailValid = $email->isValid();
+	}
+	
+	if($emailValid){ // if valid email format
+		
+		// build div
+		$emailStr = "<div class=\"row\"><div class=\"email\">"
+				.$this->formRow($form->get('login-email'))
+				."</div></div>";
+	} else {
+		// html
+		$email = $form->get('login-email');
+		$formInput = $this->formInput($email);
+		// error message
+		$errorMsg = $this->translate('Please enter a valid email address');
+	
+		// div
+		$emailStr = "<div class=\"row\"><div class=\"email\">"
+				.$formInput
+				."<ul><li>" .$errorMsg ."</li></ul>"
+						."</div></div>";
+	}
+	
+	
+	// password div
+	$pwdStr = "<div class=\"row\"><div class=\"password\">"
+			.$this->formRow($form->get('login-password'))
+			."</div></div>";
+	
+	
+	// captcha - only use if 'user' has failed to log in (help prevent hacking)
+	$captchaStr = "";
+	if($useCaptcha){
+	
+		$captcha = $form->get('login-captcha');
+		
+		if($captcha){
+			$formInput = $this->formCaptcha($captcha);
+			
+			// errors
+			$errorMsg = $this->formElementErrors($captcha);
+		
+			// message
+			$message = $this->translate('Please enter the security code above');
+		
+			// div
+			$captchaStr = "<div class=\"row\"><div class=\"captcha\">"
+					."<div>"
+					.$formInput
+					."</div>"
+					."<div>" .$message ."</div>"
+					."<ul><li>" .$errorMsg ."</li></ul>"
+					."</div></div>";
+		}
+	}
+	
+	
+	
+	// submit div
+	$submitStr = "<div class=\"row\"><div class=\"submit\">"
+			.$this->formRow($form->get('login-submit'))
+			."</div></div>";
+	
+	
+
+	
+	
+	// failed to log in? - set message
+	if($loginFailed){
+		$loginMessage = $this->translate('Log in details do not match. Please try again.');
+		$loginMessageStr = "<div><ul><li>" .$loginMessage ."</li></ul></div>";
+	} else {
+		$loginMessageStr = "";
+	}
+	
+	
+	// forgot password
+	$forgotPwdStr = "<div class=\"info\">"
+			."<div class=\"links\">"
+				."<div class=\"link_goto\">"
+					   ."<a href=\"" .$this->url('useraccount-forgotpassword') ."\">" .$this->translate('Forgot your password?') ."</a>"
+				."</div>"
+			."</div>"
+		."</div>";
+		
+		
+	// account not active
+	if($accountNotActive){
+		
+		$accountNotActiveStr = "<div class=\"info\">"
+			."<p><span class=\"alert\">"
+			.$this->translate('The account for') ." " .$loginEmail ." " .$this->translate('has not been activated (it is an important step to keep your details secure).')
+			."</span></p>"
+			."<p>" .$this->translate('To activate your account, click on the link in the activation email that you received from the byblio registration team.') ."</p>"
+			."<p>" .$this->translate('Don\'t worry if you can\'t find your email - click on the link below which will take you to the page where you can request a new one:') ."</p>"		
+			."<div class=\"links\">"
+				."<div class=\"link_goto\">"
+			   		."<a href=\"" .$this->url('useraccount-resendActivationEmail') ."\">" .$this->translate('Click here to go to the \'request a new activation  email\' page!') ."</a>"
+			   	."</div>"
+			."</div>"
+		."</div>";
+		
+		// do not offer forgot password link
+		$forgotPwdStr = "";
+		
+	} else { // account is active
+		// no message
+		$accountNotActiveStr = "";	
+	}
+	
+	
+	// account locked
+	if($accountLocked){
+		
+		$accountLockedStr = "<div class=\"info\">"
+			."<p><span class=\"alert\">"
+			.$this->translate('The account for') ." " .$loginEmail ." " .$this->translate('has been locked because there has been too many unsuccessful attempts to log in.')
+			."</span></p>"
+			."<p>" .$this->translate('You can either wait until') ." " .$nextTimeStr ." " .$this->translate('to try again, or follow the link below to reset your password and unlock your account.') ."</p>"
+			."<div class=\"links\">"
+				."<div class=\"link_goto\">"
+			   		."<a href=\"" .$this->url('useraccount-forgotpassword') ."\">" .$this->translate('Click here to go to the reset password page') ."</a>"
+			   	."</div>"
+			."</div>"
+		."</div>";
+		
+		// do not offer standard forgot password link
+		$forgotPwdStr = "";
+		
+	} else { // account is active
+		// no message
+		$accountLockedStr = "";	
+	}
+	
+	
+	
+	if($warnUser){
+		// info
+		$numAttempts = $failedLoginInfo['numAttempts'];
+		$maxNumAttempts = $failedLoginInfo['maxNumAttempts'];
+		
+		$accountLockedStr = "<div class=\"info\">"
+				."<p><span class=\"alert\">"
+				.$this->translate('Forgot your password? You\'ve tried') ." <b>" .$numAttempts ."</b> " .$this->translate('times so far. For security, we will lock the account if you don\'t get the password right after') ." <b>" .$maxNumAttempts ."</b> " .$this->translate('times.')
+				."</span></p>"
+				."<p>" .$this->translate('If you cannot remember your password, follow the link below to reset it.') ."</p>"
+				."<div class=\"links\">"
+					."<div class=\"link_goto\">"
+						."<a href=\"" .$this->url('useraccount-forgotpassword') ."\">" .$this->translate('Click here to go to the reset password page') ."</a>"
+					."</div>"
+				."</div>"
+		."</div>";
+		
+		// do not offer standard forgot password link
+		$forgotPwdStr = "";
+		
+		
+	} else {
+		$warnUserStr = "";
+	}
+	
+	
+	
+	
+	// close tag
+	$formCloseStr = $this->form()->closeTag();
+	
+	
+	
+	// opening html
+	$openStr = "<div class=\"login_form\">";
+	
+	// assemble
+	$formStr = $openStr .$formOpenStr .$csrfStr .$formNameStr .$emailStr .$pwdStr .$captchaStr .$submitStr .$loginMessageStr .$formCloseStr 
+		.$accountNotActiveStr .$accountLockedStr .$warnUserStr .$forgotPwdStr ."</div>";
+	
+	// echo
+	echo $formStr;
+	
+?>

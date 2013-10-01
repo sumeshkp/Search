@@ -1,0 +1,93 @@
+<?php
+/**
+ * Byblio
+ *  module/useraccount/view/useraccount/forgotPwd/home
+ * for user resetting password
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/useraccount.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// info
+	$resetPasswordForm = $this->resetPasswordForm;
+	$resetPasswordEmailNotInUse = $this->resetPasswordEmailNotInUse;
+	$resetPasswordEmail = $this->resetPasswordEmail;
+	$passwordReset = $this->passwordReset;
+	
+?>
+
+<div class="forgot">
+	<div class="pageTitle"><?php echo $this->translate('Forgot your password?')?></div>
+
+	<div class="pageBorder">
+	
+		<div class="col_1">
+			<div class="intro">
+				<h2><?php echo $this->translate('We can\'t tell you what it is...')?></h2>
+				<p><?php echo $this->translate('We don\'t know what your password is because we only store it as an encrypted code.'); ?></p> 
+				<p><?php echo $this->translate('Please enter your email and request a new password. We\'ll make one up which will be secure but far from memorable!');?></p> 
+				<p><?php echo $this->translate('After you have followed the link in the email, you can go to your account settings and change it.');?></p>
+			</div>
+		</div><!--  end col_1 -->
+		
+		<div class="col_2"><!-- reset password form -->
+				<div class="intro">
+					<h2><?php echo $this->translate('Reset password')?></h2>
+					<p><?php echo $this->translate('Please enter your email below. We will set a new password for you and then send you an email to let you know what it is!')?></p>
+				</div>
+				
+				<div class="form">
+					<?php 
+						// sign up form, 
+						echo $this->partial('resetPasswordForm', array('form'=>$resetPasswordForm, 'formSubmitted'=>$formSubmitted_resetPassword));
+					?>
+				</div>
+			
+				<div class="info">
+					<p><?php echo $this->translate('Alternatively...');?></p>
+					<div class="links">
+						<div class="link_goto">
+							<a href="<?php echo $this->url('useraccount-login');?> ">
+							<?php echo $this->translate('Take me to the log in page');?>
+							</a>	
+			   			</div>
+			   			<div class="link_goto">
+		   					<a href="<?php echo $this->url('home');?>"><?php echo $this->translate('Take me to the byblio home page');?></a>
+		   				</div>
+			   			<div class="link_goto">
+			   				<a href="<?php echo $this->url('library-allPublic');?>"><?php echo $this->translate('To the public libraries! (no need to sign up)');?></a>
+			   			</div>
+						
+			   		</div>
+				</div>
+		</div> <!--  end col_2 -->
+
+		<div class="clearFloats"></div>
+		
+		<!-- dialogue boxes -->
+		<?php 
+			if($resetPasswordEmailNotInUse){
+				// inform user
+				echo $this->partial('dialogueRP_emailNotInUse', array('email'=>$resetPasswordEmail));
+			}
+			
+			if($passwordReset){
+				// inform user
+				echo $this->partial('dialogueRP_emailSent', array('email'=>$resetPasswordEmail));
+			}
+			
+			
+		?>
+		
+	</div><!-- end pageBorder -->
+</div>

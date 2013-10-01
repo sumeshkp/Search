@@ -1,0 +1,249 @@
+<?php 
+
+/**
+ * Byblio
+ * Search engine master layout
+ * module/Application/view/layout/master.phtml
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	
+	// user info and logged in flag
+	$userInfo = $this->userInfo;
+	$loggedIn = $this->loggedIn;
+
+	// ref variables in all views
+	$children = $this->viewModel()->getCurrent()->getChildren();
+	$childView = $children[0];
+
+	// doc type
+	echo $this->doctype(); 
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	$translate = $sm->get('viewhelpermanager')->get('translate');
+	
+	// language direction
+	$ld = $sm->get('language_direction');
+	$dirStr = "dir=\"" .$ld ."\"";
+	
+	// language
+	$translator = $sm->get('translator');
+	$locale = $translator->getLocale();
+	$lang = mb_substr($locale, 0, 2);
+	$langStr = "lang=\"" .$lang ."\"";
+	
+	// lang html string
+	$langHTMLStr = $dirStr ." " .$langStr;
+	
+	// char set
+	$this->headMeta()->setCharset('UTF-8');
+	
+	// view port
+	$this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0');
+	
+	// head data
+	echo $this->headMeta();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// head style
+	echo $this->headStyle();
+	
+	
+	
+	
+	?>
+
+<html <?php echo $langHTMLStr; ?>>
+    <head>
+        <?php
+        
+	        // base url to javscript
+	        $baseUrl = $this->basePath(PUBLIC_FOLDER);
+	        $script = "<script type=\"text/javascript\">var BASEURL =" .json_encode($baseUrl) .";</script>";
+	        echo $script;
+	        	
+	        // ajax url to javscript
+	        $ajaxUrl = $this->basePath();
+	        $script = "<script type=\"text/javascript\">var AJAXURL =" .json_encode($ajaxUrl) .";</script>";
+	        echo $script;
+	        	
+	        // current controller route
+	        $route = $this->controllerName();
+	        $script = "<script type=\"text/javascript\">var CURRENT_ROUTE =" .json_encode($route) . ";</script>";
+	        echo $script;
+
+		
+ 			// browser title
+ 			echo $this->headTitle($childView->browserTitle);
+		
+         
+        	// favicon and core style sheets
+	        $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath(PUBLIC_FOLDER) . '/icons/layout/byblio_3.ico'))
+	                        ->prependStylesheet($this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/layout/layout.1.0.css")
+	                        ->prependStylesheet($this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/jQuery/jquery-ui-byblio.min.css")
+	                    ;
+	        
+	        echo $this->headLink(); // output all
+	        
+	        
+	        // core javscript
+	        $this->headScript()->prependFile($this->basePath(PUBLIC_FOLDER) . '/js/jQuery/jquery-1.9.1-ui-1.10.1.min.js', 'text/javascript') // jquery and jquery ui
+	        ->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/ui_general/core.1.0.js', 'text/javascript') // ui core
+	        ->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/jQuery/jstorage.min.js', 'text/javascript') // jstorage
+	        ->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/navigation/main.1.1.js', 'text/javascript') // navigation
+	        ;
+	        echo $this->headScript();      
+	      
+	    ?>
+
+        
+
+    </head>
+    <body>
+        
+        <div class="enclose_1">
+			<div class="header">
+			
+				<div class="logo">
+						<?php
+						// default
+						$imagePath = "";
+					
+						// check for custom (user) logo
+						$userLogo = $childView->userLogo;
+						
+						if(is_array($userLogo)){
+
+							// defaults
+							$logoPath = "";
+							$logoURL = "";
+							
+							// image path
+							if(key_exists($userLogo['logoPath'])){
+								$logoPath = $userLogo['logoPath'];
+							}
+							// url
+							if(key_exists($userLogo['url'])){
+								$logoURL = $userLogo['url'];
+							}
+							
+							
+							if($logoPath != "" && $logoURL != ""){ // if have valid format
+								// create image path
+								$imageStr = "<img src=\"" . $logoPath ."\" alt=\"byblio.com;\" />";
+								$imagePath = "<a href=\"" . $logoURL . "\">" .$imageStr . "</a>";
+									
+							} 
+						}
+						
+						// if no user logo set
+						if($imagePath == ""){
+							// use the byblio logo					
+						    if($this->logoHTML($childView->headerLogo)) { // if specified byblio logo exists
+								$urlStr = $this->url('home');
+						        $imagePath = "<a href=\"" . $urlStr . "\">" . $this->logoHTML($childView->headerLogo) ."</a>";
+						        
+						    } else { // else use default logo
+					        		$imagePath = "<a href=\"" . $urlStr . "\">" .$this->logoHTML('default') . "</a>";
+						    }
+						}
+						// set logo
+						echo $imagePath;
+					    
+					    ?>
+				</div><!--  end logo -->
+			
+
+				<div class="welcome_menu">
+					<?php	
+						
+						// user details (logged in)
+						if($loggedIn){ // if logged in
+
+							// welcome:
+							$email = "";
+							$firstName = "";
+							$hello = $this->translate('Hello');
+						
+							if(is_array($userInfo)){
+								if(key_exists('email', $userInfo)){
+									$email = $userInfo['email'];
+								}
+								if(key_exists('firstName', $userInfo)){
+									$firstName = $userInfo['firstName'];
+								}
+							}
+						
+							// div string
+							$introStr = "<div class=\"welcome\">" .$hello ." <span class=\"firstName\">" .$firstName ."</span> (" .$email .")</div>";
+							
+							// log out:
+							$linkStr = $this->url('useraccount-logout');
+							$linkNameStr = $this->translate('Log out');
+							
+							// logout string
+							$hRefStr = "<a href=\"" .$linkStr ."\">" .$linkNameStr ."</a>";
+							$logoutStr = "<div class=\"logout\">" .$hRefStr ."</div>";
+							
+							// welcome string
+							$welcomeStr = "<div class=\"welcome_logout\">" .$introStr .$logoutStr ."</div>";
+							
+							echo $welcomeStr;
+							
+							
+						}
+					
+						// main navigation menu
+						echo $this->partial('layoutMasterMainMenu');
+					?>
+				</div><!-- end welcome_menu -->
+					
+						
+			</div><!-- header -->
+	
+			<div class="clearFloats"></div>
+        
+        
+        
+        
+        	<!-- main content -->
+	        <div class="content">
+					<?php echo $this->content;?>
+			</div>
+		
+			<div class="clearFloats"></div>
+            
+            
+       
+            
+       		<!--  footer -->
+       		<div class="footer">
+               
+       		<?php  
+                // menu items:
+                
+                // copyright
+              	$cpStr = "&copy; " .date("Y") ." Byblio.com";
+              
+				
+				$footerStr = "<div class=\"footer_txt\">" .$cpStr ."</div>"
+	        				."<div class=\"spacer\">|</div>"
+						    ;
+				
+				echo $footerStr;
+					
+			?>
+			
+      		</div> <!-- end footer -->
+            
+         </div> <!-- /enclose_1 --> 
+       
+        <?php echo $this->inlineScript() ?>
+        
+        
+    </body>
+</html>

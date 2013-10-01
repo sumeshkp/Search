@@ -1,0 +1,150 @@
+<?php
+
+/**
+ * Byblio.
+ * Search, CMS
+ * partial view helper to format CMS add content form
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// escape if no form
+	if(!$this->form){
+		return;
+	}
+	
+	// ref form
+	$form = $this->form;
+	
+	// prepare
+	$form->prepare();
+	
+	// ref input filter and validator
+	//$filter = $form->getInputFilter();
+	
+	// opening html
+	$openStr = "<div class=\"addContent_form\">";
+	$formOpenStr = $this->form()->openTag($form);
+	
+	// form name
+	$formNameStr = $this->formRow($form->get('formname'));
+	
+	// csrf
+	$csrfStr = $this->formRow($form->get('addContentCsrf'));
+	
+	// content id div
+	$contentIdStr = "<div class=\"row\">"
+				."<div class=\"contentId\">"
+					.$this->formRow($form->get('cms-add-contentId'))
+					."<div class=\"label\">" .$this->translate('Content id') ."</div>"
+				."</div>"
+				."<div class=\"clearFloats\"></div>"
+				."</div>";
+	
+	// title
+	$titleStr = "<div class=\"row\">"
+			."<div class=\"title\">"
+				.$this->formRow($form->get('cms-add-title'))
+				."<div class=\"label\">" .$this->translate('Title') ."</div><div class=\"clearFloats\"></div>"
+			."</div></div>";
+	
+	// summary
+	$summaryStr = "<div class=\"row\">"
+			."<div class=\"summary\">"			
+				.$this->formRow($form->get('cms-add-summary'))
+				."<div><div class=\"label\">" .$this->translate('Summary') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	// is type
+	$isTypeStr = "<div class=\"row\">"
+			."<div class=\"isType\">"			
+				.$this->formRow($form->get('cms-add-isType'))
+				."<div><div class=\"label\">" .$this->translate('Type of content (single value)') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	// has type
+	$hasTypeStr = "<div class=\"row\">"
+			."<div class=\"hasType\">"			
+				.$this->formRow($form->get('cms-add-hasType'))
+				."<div><div class=\"label\">" .$this->translate('Types of content within this (csv)') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	// all type string
+	$allTypeStr = "<div class=\"row\">"
+			.$isTypeStr
+			.$hasTypeStr
+			."</div>"
+					."<div class=\"clearFloats\"></div>";
+	
+	// author
+	$authorStr = "<div class=\"row\">"
+			."<div class=\"author\">"			
+				.$this->formRow($form->get('cms-add-author'))
+				."<div><div class=\"label\">" .$this->translate('Author') ."</div><div class=\"clearFloats\"></div></div>"
+			."<div class=\"info\">" .$this->translate("Separate multiple authors with a semicolon, and list surname first. e.g. 'Smith, Adam; Collins, J.'") ."</div>"
+			."</div></div>";
+	
+	// publisher
+	$publisherStr = "<div class=\"row\">"
+			."<div class=\"publisher\">"
+				.$this->formRow($form->get('cms-add-publisher'))
+				."<div><div class=\"label\">" .$this->translate('Publisher') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	
+	// Genre
+	$genreStr = "<div class=\"row\">"
+			."<div class=\"genre\">"
+				."<div class=\"label\">" .$this->translate('Genre') ."</div>"
+				.$this->formRow($form->get('cms-add-genre'))
+			."<div class=\"clearFloats\"></div>"
+			."</div></div>";
+	
+	// date of publication
+	$dopStr = "<div class=\"yop\">"
+			.$this->formRow($form->get('cms-add-dop'))
+			."<div><div class=\"label\">" .$this->translate('Date of publication') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div>";
+	
+	$allTimeStr = "<div class=\"row\">"
+			.$dopStr
+			."</div>"
+			."<div class=\"clearFloats\"></div>";
+	
+	// content text
+	$contentTextStr = "<div class=\"row\">"
+				."<div class=\"contentText\">"
+				.$this->formRow($form->get('cms-add-contenttext'))
+				."<div><div class=\"label\">" .$this->translate('Content body text') ."</div><div class=\"clearFloats\"></div></div>"
+			."</div></div>";
+	
+	
+	
+	// submit div
+	$submitStr = "<div class=\"row\"><div class=\"submit\">"
+			.$this->formRow($form->get('cms-add-submit'))
+			."</div></div>";
+	
+	
+	// close tag
+	$formCloseStr = $this->form()->closeTag();
+	
+	// assemble
+	$formStr = $openStr .$formOpenStr .$csrfStr .$formNameStr 
+		.$contentIdStr
+		.$titleStr
+		.$authorStr
+		.$publisherStr
+		.$genreStr
+		.$allTimeStr
+		.$summaryStr
+		.$allTypeStr
+		.$contentTextStr
+		.$submitStr
+	.$formCloseStr ."</div>";
+	
+	// echo
+	echo $formStr;
+	
+?>

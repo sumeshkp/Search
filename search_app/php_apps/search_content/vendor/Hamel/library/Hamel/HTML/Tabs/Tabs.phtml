@@ -1,0 +1,95 @@
+<?php 
+
+/**
+ * Byblio
+ * Partial view helper
+ * HTML for jQuery tabs
+ *
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	if(!$this->tabsInfo){
+		return;
+	}
+	
+	// info
+	$tabsInfo = $this->tabsInfo;
+	$menuList = $tabsInfo['menuList'];
+	$menuClass = $tabsInfo['menuClass'];
+	$tabsType = $tabsInfo['tabsType'];
+
+
+
+
+?>
+
+<!--  tabs HTML -->
+<div class="<?php echo $menuClass?>">
+	<ul>
+		<?php // echo out each menu item if exist
+		if(is_array($menuList)){
+			foreach ($menuList as $menuItemList){
+				
+				if(is_array($menuItemList)){
+					// menu item info
+					if(key_exists('href', $menuItemList)){
+					    $href = $menuItemList['href'];
+					} else {
+					    $href = "";
+					}
+					
+					if(key_exists('text', $menuItemList)){
+					    $text = $menuItemList['text'];
+					} else {
+					    $text = "";
+					}
+					
+					if(key_exists('id', $menuItemList)){
+					    $id = $menuItemList['id'];
+					    $aId = 'a-' .$id;
+					} else {
+					    $id = "";
+					    $aId = "";
+					}
+					
+					if(key_exists('class', $menuItemList)){
+						$class = $menuItemList['class'];
+						$classStr = "class=\"" .$class ."\"";
+					} else {
+						$classStr = "";
+					}
+					
+					if(key_exists('linkType', $menuItemList)){
+					    $linkType = $menuItemList['linkType'];
+					    $linkTypeStr = "linkType=\"" .$linkType ."\"";
+					} else {
+					   $linkTypeStr = "";
+					}
+					
+					switch($linkType){
+					    case 'pagetab': // format for jquery tabs
+					    case 'contentTab':
+					        $str = "<li id=\"" .$id ."\" ><a" .$classStr ." href=\"" .$href ."\"" ." id=\"" .$aId ."\" ".$linkTypeStr .">" .$text ."</a></li>";
+					    break;
+
+					    case 'url': // format for mock tab, but not jQuery tabs
+					        $str = "<div id=\"" .$id ."\" class=\"pageTabUrl\"><a" ." href=\"" .$href ."\"" ." id=\"" .$aId ."\" ".$linkTypeStr .">" .$text ."</a></div>";
+					    break;   
+					};
+					
+					// print div
+					echo $str;
+				}
+				
+			}
+		}
+		?>
+	</ul>
+</div>
+
+
+
+
+	

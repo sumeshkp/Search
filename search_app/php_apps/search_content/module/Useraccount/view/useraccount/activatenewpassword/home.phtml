@@ -1,0 +1,96 @@
+<?php
+	/**
+	 * Byblio
+	 *  module/useraccount/view/useraccount/activate/home
+	 * for user resetting password
+	 * @copyright 2013 Byblio.com
+	 * @author: Paul A. Oliver
+	 *
+	 */
+
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/useraccount.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// flags
+	$activatedNewPassword =  $this->activatedNewPassword;
+	$alreadyActivated =  $this->alreadyActivated;
+	$firstName =  $this->firstName;
+
+	$title = $this->translate('Hello') ." " .$firstName;
+	
+?>
+
+<div class="activate">
+	<div class="pageTitle"><?php echo $title?></div>
+
+	<div class="pageBorder">
+	
+		<div class="col_1"><!-- sign up -->
+		
+			<?php if($activatedNewPassword):?><!-- activated new user -->
+			
+			<div class="intro">
+				<h2><?php echo $this->translate('Password reset!')?></h2>
+				<p><?php echo $this->translate('Your new password is now active, and we have logged you in.'); ?></p> 
+				<p><?php echo $this->translate('Where would you like to go now?');?></p> 
+			</div>
+			
+			<div class="links">
+				<div class="link_goto">
+	   				<a href="<?php echo $this->url('useraccount-accountSettings');?> ">
+   					<?php echo $this->translate('View your account settings (where you can change your password)');?>
+   					</a>
+   				</div>	
+				<div class="link_goto">
+					<a href="<?php echo $this->url('library', array('action'=>'private'));?> ">
+					<?php echo $this->translate('Create a new library');?>
+					</a>	
+	   			</div>
+	   			<div class="link_goto">
+	   				<a href="<?php echo $this->url('library', array('action'=>'public'));?>"><?php echo $this->translate('To the public libraries!');?></a>
+	   			</div>	
+			</div>
+				
+			<?php endif; ?><!--  end if activated new user -->
+			
+			
+			<?php if($alreadyActivated):?><!-- not activated new user -->
+			
+			<div class="intro">
+				<h2><?php echo $this->translate('Already reset your password?')?></h2>
+				<p><?php echo $this->translate('We could not set your new password because either you\'ve done it already or we\'ve made an error.'); ?></p> 
+				
+				<p><?php echo $this->translate('If you can remeber your new password, go to the log in page:');?></p> 
+				<div class="links">
+					<div class="link_goto">
+		   				<a href="<?php echo $this->url('useraccount-login');?>"><?php echo $this->translate('Take me to the log in page');?></a>
+		   			</div>
+	   			</div>
+				
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p><?php echo $this->translate('If you need a new password, click here:');?></p> 
+				<div class="links">
+					<div class="link_goto">
+		   				<a href="<?php echo $this->url('useraccount-forgotpassword');?>"><?php echo $this->translate('Click here to go to the \'reset password\' page!');?></a>
+		   			</div>
+	   			</div>
+			</div>
+			
+			<?php endif; ?><!--  end if NOT activated new user -->
+			
+		</div>
+		
+		
+
+		<div class="clearFloats"></div>
+	</div>
+</div>

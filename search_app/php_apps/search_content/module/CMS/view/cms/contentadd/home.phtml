@@ -1,0 +1,199 @@
+<?php
+
+/**
+ * Byblio
+ * Search
+ * CMS, test, add and update content
+ * Test page (visual output of) CMS interaction with search engine
+ * 
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+
+	// style sheet
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/cms/cms-test.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+
+	// javascript
+	$this->headScript()->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/cms/cmsTest.1.0.js', 'text/javascript'); // page functionality
+	
+	// search form
+	$addFormNameStr = "";
+	$addForm = $this->addForm;
+	if($addForm){
+		// form name
+		$addFormNameStr = $addForm->formName;
+	} else {
+		$addForm = array();
+	}
+	
+	
+	// ** info for cmsTest.js:
+	if(!is_array($this->pageSettings)){
+		$pageSettings = array();
+	} else {
+		$pageSettings = $this->pageSettings;
+	}
+	// place holder. Note: page settings passed by reference
+	$this->placeholder('pageSettings')->pageSettings = &$pageSettings;
+	
+	// html info:
+	if(!key_exists('html', $pageSettings)){
+		$pageSettings['html'] = array();
+	}
+	
+	
+	// search form html info
+	$jsAddFrom = array();
+	
+	// id list
+	$idList = array();
+	$formPanelId = 'formPanel';
+	$idList['addPanel'] = $formPanelId; // form panel
+	$requestPanelId = 'requestPanel'; 
+	$idList['requestPanel'] = $requestPanelId; // panel to display request
+	$resultsPanelId = 'resultsPanel';
+	$idList['resultsPanel'] = $resultsPanelId; //. panel to display results of request
+	$jsAddFrom['idList'] = $idList;
+	
+	
+	// class list
+	if(is_array($addForm->classList)){
+		$classList = $addForm->classList;
+	} else {
+		$classList = array();
+	}
+	$classList['info'] = 'info';
+	$classList['progress'] = 'progress';
+	$classList['posted'] = 'posted';
+	$classList['received'] = 'received';
+	$classList['interpretted'] = 'interpretted';
+	$jsAddFrom['classList'] = $classList;
+	
+	// element name list
+	if(is_array($addForm->elementList)){
+		$elementList = $addForm->elementList;
+	} else {
+		$elementList = array();
+	}
+	$jsAddFrom['elementList'] = $elementList;
+	
+	// form name
+	$jsAddFrom['formName'] = $addFormNameStr;
+	
+	// data tags
+	$dataList = array();
+	$dataList['optionType'] = 'optiontype';
+	$dataList['variableName'] = 'variablename';
+	$jsAddFrom['dataList'] = $dataList;
+	
+	// ajax info
+	$ajaxInfo = array();
+	if($this->ajaxInfo){
+		$ajaxInfo = $this->ajaxInfo;
+	}
+	$pageSettings['ajax'] = $ajaxInfo;
+	
+	// record search form info
+	$pageSettings['html']['addForm'] = $jsAddFrom;
+
+
+	// key words
+	$keyWords = $this->keyWords;
+	if(!is_array($keyWords)){
+		$keyWords = array();
+	}
+	$pageSettings['keyWords'] = $keyWords;
+	
+?>
+
+	
+<div class="cms_test">
+
+	<div class="pageTitle"><div class="add"><?php echo $this->translate('CMS: add & update content (test)');?></div></div>
+	
+	<div class="pageBorder">
+	
+		<div class="row1">
+			<!-- content add request input -->
+			<div class="formPanel" id="<?php echo $formPanelId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('CMS request');?></div>
+				
+				<!--  form -->
+				<?php
+				echo $this->partial('contentAddForm', array('form'=>$addForm));
+				?>
+			
+			</div> <!-- end search form panel -->
+			
+			<!-- results, loaded by javascript -->
+			<div class="resultsPanel" id="<?php echo $resultsPanelId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('Return results');?></div>
+			
+				<!-- info -->
+				<div class="info"></div>
+				
+				<!-- progress indicator -->
+				<div class="progress"></div>
+				
+			</div><!--  end results panel -->
+			
+			
+		</div><!-- end row1 -->
+		
+		<div class="clearFloats"></div>
+		
+		<div class="row2">
+		
+			<!-- request, loaded by javascript -->
+			<div class="requestPanel" id="<?php echo $requestPanelId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('HTTP post request');?></div>
+				
+				<div class="allInfo">
+					<div class="posted">
+						<div class="heading"><?php echo $this->translate('Posted');?></div>
+						<div class="info">If you can see this, the javascript engine is not running.</div>
+					</div>
+					<div class="received">
+						<div class="heading"><?php echo $this->translate('Received');?></div>
+						<div class="info"></div>
+					</div>
+					<div class="interpretted">
+						<div class="heading"><?php echo $this->translate('Interpretted as');?></div>
+						<div class="info"></div>
+					</div>
+				</div>
+				<div class="clearFloats"></div>
+			
+			</div><!--  end request panel -->
+			
+			
+		</div><!--  end row2 -->
+		
+	</div><!--  end pageBorder -->
+	
+</div><!-- end webApp -->
+	
+	
+	
+	
+	
+<?php	
+	// page settings for js
+	$pageSettings = $this->placeholder('pageSettings')->pageSettings;
+	$pageSettingsJson = json_encode($pageSettings);
+	
+	// echo out
+	$script = "<script type=\"text/javascript\">var ByblioContentAddInfo =" .$pageSettingsJson .";</script>";
+	echo $script;
+?>

@@ -1,0 +1,41 @@
+<?php 
+
+/**
+ * Byblio
+ * Search engine home page
+ * 
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+
+	// logged in?
+	$loggedIn = $this->loggedIn;
+
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/home/home.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// images folder
+	$imagesFolder = $this->basePath(PUBLIC_FOLDER) . "/images/home";
+	
+	// browse link
+// 	$link2Str = $this->url('library-allPublic', array('action'=>'home'));
+// 	$link2NameStr = $this->translate('or browse here');
+	
+	
+?>
+<div class="home">
+   
+
+	<div class="searchImage"></div>
+	<div class="clearFloats"></div>
+	   
+</div>

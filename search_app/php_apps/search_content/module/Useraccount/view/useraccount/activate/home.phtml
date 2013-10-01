@@ -1,0 +1,96 @@
+<?php
+	/**
+	 * Byblio
+	 *  module/useraccount/view/useraccount/activate/home
+	 * for user resetting password
+	 * @copyright 2013 Byblio.com
+	 * @author: Paul A. Oliver
+	 *
+	 */
+
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/useraccount.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// flags
+	$activatedUser =  $this->activatedUser;
+	$alreadyActivated =  $this->alreadyActivated;
+	$firstName =  $this->firstName;
+
+	$title = $this->translate('Hello') ." " .$firstName;
+	
+?>
+
+<div class="activate">
+	<div class="pageTitle"><?php echo $title?></div>
+
+	<div class="pageBorder">
+	
+		<div class="col_1"><!-- sign up -->
+		
+			<?php if($activatedUser):?><!-- activated new user -->
+			
+			<div class="intro">
+				<h2><?php echo $this->translate('Welcome to byblio.com!')?></h2>
+				<p><?php echo $this->translate('Your account is now active, and we have logged you in.'); ?></p> 
+				<p><?php echo $this->translate('Where would you like to go now?');?></p> 
+			</div>
+			
+			<div class="links">
+				<div class="link_goto">
+					<a href="<?php echo $this->url('library', array('action'=>'private'));?> ">
+					<?php echo $this->translate('Create a new library');?>
+					</a>	
+	   			</div>
+	   			<div class="link_goto">
+	   				<a href="<?php echo $this->url('library', array('action'=>'public'));?>"><?php echo $this->translate('To the public libraries!');?></a>
+	   			</div>
+	   			<div class="link_goto">
+	   				<a href="<?php echo $this->url('useraccount-accountSettings');?> ">
+   					<?php echo $this->translate('View your account settings');?>
+   					</a>
+   				</div>		
+			</div>
+				
+			<?php endif; ?><!--  end if activated new user -->
+			
+			
+			<?php if($alreadyActivated):?><!-- not activated new user -->
+			
+			<div class="intro">
+				<h2><?php echo $this->translate('Already active?')?></h2>
+				<p><?php echo $this->translate('We could not activate your account because either you\'ve done it already or we\'ve made an error.'); ?></p> 
+				
+				<p><?php echo $this->translate('If your account is active, go to the log in page:');?></p> 
+				<div class="links">
+					<div class="link_goto">
+		   				<a href="<?php echo $this->url('useraccount-login');?>"><?php echo $this->translate('Take me to the log in page');?></a>
+		   			</div>
+	   			</div>
+				
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p><?php echo $this->translate('If you need a new activation email, click here:');?></p> 
+				<div class="links">
+					<div class="link_goto">
+		   				<a href="<?php echo $this->url('useraccount-resendActivationEmail');?>"><?php echo $this->translate('Click here to go to the \'request a new activation  email\' page!');?></a>
+		   			</div>
+	   			</div>
+			</div>
+			
+			<?php endif; ?><!--  end if NOT activated new user -->
+			
+		</div>
+		
+		
+
+		<div class="clearFloats"></div>
+	</div>
+</div>

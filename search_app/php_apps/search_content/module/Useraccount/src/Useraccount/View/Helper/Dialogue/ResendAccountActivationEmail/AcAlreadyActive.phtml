@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Byblio
+ * partial view helper, dialogue box, user requested new activaion email - account already active
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	// email in use
+	$email = $this->email;
+	
+	// title
+	$titleStr = $this->translate('Was that the right email?');
+
+?>
+
+<!--  html -->
+<div style="{display:none;}"> <!-- wrap in hidden div to stop fouc -->
+	<div id="dialogue-message" class="dialogue-message" title="<?php echo $titleStr; ?>">
+		<div class="message">
+			<p><?php echo $this->translate('The account using') ." " .$email ." " .$this->translate('has already been activated, so you don\'t need to have a new activation email.');?></p>
+			
+			<div class="links">
+			
+				<p><?php echo $this->translate('If you have forgotten your pasword, click here:'); ?></p>
+				<div class="link_goto">
+			   		<a href="<?php echo $this->url('useraccount-forgotpassword');?>"><?php echo $this->translate('Take me to the password reset page.');?></a>
+			   	</div>
+				
+				<p>&nbsp;</p>
+				<p><?php echo $this->translate('Or follow theses links to go somewhere else...'); ?></p>
+				<div class="link_goto">
+	   				<a href="<?php echo $this->url('home');?>"><?php echo $this->translate('Byblio home page');?></a>
+	   			</div>
+				<div class="link_goto">
+	   				<a href="<?php echo $this->url('library', array('action'=>'public'));?>"><?php echo $this->translate('Public libraries');?></a>
+	   			</div>
+				
+	   		</div>
+		
+		</div>
+	</div>
+</div>
+
+<!-- script to activate -->
+<script>
+
+	// css to hide close button, set title colour, set link colour
+	var closeStr = ".ui-dialog-titlebar-close{display: none;}";
+	var titleStr = ".ui-dialog-title{color:#F00 !important;}"; // must be '!important'
+	var allCSSStr = "<style>" +closeStr +titleStr +"</style>"
+	// write csss
+	document.write(allCSSStr);
+
+	
+	// open dialogue box
+	// NOTE: important to blur the links and buttons on open (else they will be highlighted)
+	
+	$(function(){
+	    $("#dialogue-message").dialog({
+	        modal: true,
+	        buttons: {
+		        Ok: function() {
+		          $(this).dialog( "close" );
+		        }
+	      	},
+	     	draggable: false,
+	     	resizable: false,
+	     	open: function(event, ui){ // blur
+	     		$('.ui-dialog :button').blur();
+	     		$('.ui-dialog a').blur();
+	        },
+	        position: {my: 'center center', at: 'center center-50', of: window},
+	        dialogClass: 'signup', // page class
+	    });
+	});
+
+
+  
+</script>

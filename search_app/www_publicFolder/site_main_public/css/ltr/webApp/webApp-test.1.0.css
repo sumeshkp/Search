@@ -1,0 +1,208 @@
+/**
+ * Byblio search engine
+ * web app test
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+
+@CHARSET "UTF-8";
+
+
+
+.webApp_test .pageTitle{
+	color: #B19177; /* light brown */
+}
+
+.webApp_test .sectionTitle{
+	font-family: Tahoma, Geneva, sans-serif;
+	font-weight: bold;
+	font-size: 14pt;
+	margin: 0px 0px 10px 0px;
+}
+.webApp_test .searchPanel .sectionTitle, .webApp_test .requestPanel .sectionTitle{
+	color: #5E1E1F; /* dark brown */
+}
+.webApp_test .resultsPanel .sectionTitle{
+	color: #FF6600; /* dark orange */
+}
+.webApp_test .row1{
+	width: 100%;
+	margin: 10px 0px 0px 0px;
+}
+.webApp_test .row2{
+	margin: 20px 0px 10px 0px;
+	padding: 10px 10px 20px 10px;
+	border-top: 1pt solid #CCC;
+	border-bottom: 1pt solid #CCC;
+}
+
+.webApp_test .row1 .searchPanel{
+	width: 450px;
+	padding: 10px 10px 20px 10px;
+	margin: 0px 0px 0px 0px;
+	float: left;
+
+	border: 1pt solid #CCC;
+
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	webkit-border-radius: 8px;
+}
+
+.webApp_test .row1 .resultsPanel{
+	/* width: 10%; */
+	padding: 10px 10px 20px 10px;
+	margin: 0px 0px 0px 490px;
+	/* float: left; */
+
+	border-top: 1pt solid #CCC;
+	border-bottom: 1pt solid #CCC;
+
+}
+
+.webApp_test .searchPanel .search_form .row{
+	margin: 10px 0px 0px 0px;
+	width: 100%;
+}
+.webApp_test .searchPanel .search_form .label{
+	margin: 1px 10px 0px 0px;
+	float: left;
+}
+.webApp_test .searchPanel .search_form .query{
+	margin: 20px 0px 20px 0px;
+}
+
+.webApp_test .searchPanel .search_form .query .input{
+	width: 90%;
+	font-size: 11pt;
+	padding: 1px 10px 5px 30px;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius:8px;
+	background: url(../../../icons/search/search16_80-grey.png) no-repeat 6px 4px;
+	color: #333399; /* purple */
+}
+
+.webApp_test .searchPanel .search_form .facets{
+	margin: 0px 0px 10px 0px;
+	padding: 6px 10px 20px 10px;
+	color: #5E1E1F; /* dark brown */
+	border: 1pt solid #CCC;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	webkit-border-radius: 8px;
+
+}
+.webApp_test .searchPanel .search_form .facets .heading{
+	color: #B19177; /* light brown */
+}
+
+.webApp_test .searchPanel .search_form .genre .input{
+	margin: 0px 5px 0px 10px;
+}
+.webApp_test .searchPanel .search_form .genre .label{
+	margin: 0px 0px 0px 0px;
+	color: #B19177; /* light brown */
+}
+
+.webApp_test .searchPanel .search_form .yop .input{
+	width: 45%;
+	margin: 0px 10px 0px 0px;
+	float: left;
+}
+.webApp_test .searchPanel .search_form .mop .input{
+	width: 45%;
+	margin: 0px 0px 0px 0px;
+	float: left;
+}
+
+.webApp_test .searchPanel .search_form .facetHeading .heading{
+	float: left;
+	margin: 1px 10px 0px 0px;
+}
+.webApp_test .searchPanel .search_form .facetHeading{
+	margin: -15px 0px 0px 10px;
+	padding: 0px 10px 0px 10px;
+	background-color: #FFF;
+	width: 300px;
+}
+
+
+.webApp_test .requestPanel .allInfo{
+	
+}
+
+.webApp_test .requestPanel .allInfo .heading{
+	font-weight: bold;
+	color: #5E1E1F; /* dark brown */
+	margin: 0px 0px 5px 0px;
+}
+.webApp_test .requestPanel .allInfo .info .heading{
+	font-weight: normal;
+	color: #5E1E1F; /* dark brown */
+	margin: 10px 0px 3px 0px;
+}
+
+.webApp_test .requestPanel .posted{
+	width: 31%;
+	float: left;
+	padding: 0px 5px 0px 0px;
+}
+.webApp_test .requestPanel .received{
+	width: 31%;
+	float: left;
+	padding: 0px 5px 0px 5px;
+	border-left: 1pt solid #CCC;
+}
+.webApp_test .requestPanel .interpretted{
+	width: 31%;
+	float: left;
+	padding: 0px 0px 0px 5px;
+	border-left: 1pt solid #CCC;
+}
+
+.webApp_test .requestPanel .info .name{
+	color: #B19177; /* light brown */
+}
+.webApp_test .requestPanel .info .error{
+	color: #F00;
+	font-style: italic;
+}
+.webApp_test .resultsPanel .heading{
+	color: #FF6600; /* dark orange */
+	font-weight: bold;
+	margin: 0px 0px 5px 0px;
+}
+.webApp_test .resultsPanel .info .heading{
+	font-weight: bold;
+	color: #5E1E1F; /* dark brown */
+	margin: 10px 0px 3px 0px;
+}
+
+.webApp_test .resultsPanel .results {
+	overflow: auto;
+	max-height: 400px;
+	margin: 0px 0px 20px 0px;
+}
+.webApp_test .resultsPanel .resultsTable .even{
+	background-color:#FFE1C4;
+}
+.webApp_test .resultsPanel .resultsTable .name{
+	color: #FF6600; /* dark orange */
+	vertical-align: top;
+	width: 150px;
+}
+.webApp_test .resultsPanel .resultsTable .break{
+	color: #CCC;
+	vertical-align: middle;
+	text-align: center;
+}
+
+
+
+
+
+
+

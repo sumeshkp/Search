@@ -1,0 +1,570 @@
+<?php
+
+/**
+ * Byblio
+ * Account sign up options.
+ * Partial view helper
+ *  module/Useraccount/src/Useraccount/View/Helper/Signup/AccountOptions.phtml
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	// logged in
+	$loggedIn = $this->loggedIn;
+	
+	// account type of user
+	if($loggedIn){
+		$userInfo = $this->userInfo;
+		$user_acTypeId = $userInfo['acTypeId'];
+	} else {
+		$user_acTypeId = null;
+	}
+	
+	// page settings, passed by reference 
+	$pageSettings = &$this->placeholder('pageSettings')->pageSettings;
+	
+	// ** html info for js
+	if(!key_exists('html', $pageSettings)){
+		$pageSettings['html'] = array();
+	}
+	
+	// info used for js
+	$jsAccountOptions = array();
+	
+	// class list
+	$classList = array();
+	$classList['allAcOptions'] = 'acOptions';
+	$classList['acOption'] = 'option';
+	$classList['allAcSubOptions'] = 'selectOption';
+	$classList['acTitle'] = 'opTitle';
+	$classList['acOtionTitle'] = 'acOpTitle';
+	$acSubOptionClass = 'acSubOption';
+	$classList['acSubOption'] = $acSubOptionClass;
+	$classList['price'] = 'price';
+	$classList['currency'] = 'currency';
+	$totalCurrencyClass = 'totalCurrency';
+	$classList['totalCurrency'] = $totalCurrencyClass;
+	$totalFreeClass = 'totalFree';
+	$classList['totalFree'] = $totalFreeClass;
+	$acSelectClass = 'acSelect';
+	$classList['acSelect'] = $acSelectClass;
+	$optionPinClass = 'optionPin';
+	$classList['optionPin'] = $optionPinClass;
+	$pinClass = 'pin';
+	$classList['pin'] = $pinClass;
+	$unpinClass = 'unpin';
+	$classList['unpin'] = $unpinClass;
+	$classList['acSelected'] = 'acSelected';
+	$classList['optionNoChoice'] = 'non-input';
+	$classList['optionChoice'] = 'input';
+	$classList['optionAllChoices'] = 'optionAllChoices';
+	$classList['optionChoiceLabel'] = 'optionChoiceLabel';
+	$classList['optionChoicePrice'] = 'priceDefault';
+	$classList['optionChoiceEnt'] = 'entitlement';
+	$jsAccountOptions['classList'] = $classList;
+	
+	// data tags
+	$dataList = array();
+	$dataList['acOption'] = 'acoption';
+	$dataList['acSubOption'] = 'suboption';
+	$dataList['acSubOptionChoice'] = 'suboptionchoice';
+	$dataList['acSubOptionPrice'] = 'price';
+	$dataList['acGroupType'] = 'grouptype';
+	$dataList['inputname'] = 'inputname';
+	$dataList['price'] = 'price';
+	$dataList['acCorePrice'] = 'coreacprice';
+	$dataList['currencyCode'] = 'currency_code';
+	$dataList['currencySymbol'] = 'currency_symbol';
+	$dataList['thousandsSep'] = 'thousands_sep';
+	$dataList['decimalSep'] = 'dec_point';
+	$jsAccountOptions['dataList'] = $dataList;
+	
+	// ids
+	$idList = array();
+	$acOptionsId = 'acAllOptions';
+	$idList['acAllOptions'] = $acOptionsId;
+	$jsAccountOptions['idList'] = $idList;
+	
+	$pageSettings['html']['acOptions'] = $jsAccountOptions;
+	
+	
+	// locale used for number formatting
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	$locale = $sm->get('language_locale');
+	
+	// number format
+	$numberformat = new Hamel\General\Numberformat($locale);
+	
+	// current formatting info, as html data tags
+	$numFormatInfo = $numberformat->getCurrentFormattingInfo();
+	$numFormatDataStr = " data-thousands_sep=\"" .$numFormatInfo['thousands_sep'] ."\" data-dec_point=\"" .$numFormatInfo['dec_point'] ."\"";
+
+	// account options
+	$acAllOptionsInfo = $this->acOptionInfo;
+	$acAllOptions = $acAllOptionsInfo['acOptions'];
+	 
+	// account types
+	$allAccountInfo = $this->allAccountInfo;
+	$accountInfoByType = $allAccountInfo['byType'];
+	
+	// user types
+	$allUsertypeInfo = $this->allUsertypeInfo;
+	$usertypesByType = $allUsertypeInfo['byType'];
+	
+	
+	// create html of ac options
+	$acOptionHTML = array();
+	
+	// ac currency and number formatting info
+	$acPriceHTMLInfo = array();
+	
+	
+	
+	// for each acount type
+	foreach($acAllOptions as $acType => $acOptions){
+		
+		if(key_exists($acType, $accountInfoByType)){
+		
+			// account id
+			$acId = $accountInfoByType[$acType]['id'];
+			
+			// account type
+			$groupType = $accountInfoByType[$acType]['groupType'];
+			
+			// option html
+			$accountOptionStr = "";
+			
+			// option num
+			$optionNum = 0;
+			
+			// for each option within this account type
+			foreach($acOptions as $optionType => $optionInfo){
+				
+				// option num
+				$optionNum++;
+				
+				// option id and name - defaults
+				$optionId = $optionType;
+				$optionNameStr = "";
+				
+				// name of option and option id: user type
+				if(key_exists($optionType, $usertypesByType)){
+					$infoList = $usertypesByType[$optionType];
+					if(is_array($infoList)){
+		
+						// id
+						$optionId = $infoList['id'];
+		
+						// name
+						$nameInfo = $infoList['name'];
+						if(key_exists('many', $nameInfo)){
+							$optionNameStr = $nameInfo['many'];
+						}
+					}
+				}
+				// name of option and option id: account type
+				if(key_exists($optionType, $accountInfoByType)){
+					$infoList = $accountInfoByType[$optionType];
+					if(is_array($infoList)){
+		
+						// id
+						$optionId = $infoList['id'];
+		
+					}
+				}
+				
+				
+				
+				// pricing info
+				$allPricing = $optionInfo['pricing'];
+				$currencyInfo = $optionInfo['currencyInfo'];
+				
+				// currency info
+				$currencyInfoDataStr = "";
+				$currencyStr = "";
+				if(is_array($currencyInfo)){
+					$cCode = $currencyInfo['code'];
+					$cSymbol = $currencyInfo['symbol'];
+					
+					// set currency string
+					$currencyStr = $cSymbol;
+					
+					// set data string
+					$currencyInfoDataStr = " data-currency_code=\"" .$cCode ."\" data-currency_symbol=\"" .$cSymbol ."\"";
+				}
+				
+				
+				
+	
+				// fieldset input name
+				$inputNameStr = $acId ."-" .$optionId;
+				
+				// fieldset opening html
+				if($optionNum == 1){
+					$htmlOpen = "<fieldset data-suboption =\"" .$optionId ."\" data-inputname=\"" .$inputNameStr ."\" class=\"noBorder " .$acSubOptionClass ."\">";
+				} else {
+					$htmlOpen = "<fieldset data-suboption =\"" .$optionId ."\" data-inputname=\"" .$inputNameStr ."\" class=\"" .$acSubOptionClass ."\">";
+				}
+				$htmlClose = "</fieldset>";
+				
+				// legend for filed set
+				if($optionNameStr == ""){
+					$legendStr = "";
+				} else {
+					$legendStr = "<legend class=\"legend acOpTitle\">" .$optionNameStr ."</legend>";
+				}
+				
+				// html of all sub options
+				$subOptionHTMLStr = "";
+					
+				
+				// reset current sub option num
+				$optionSubOptionNum = 0; 
+				
+				if(is_array($allPricing)){
+					
+					// number of sub options
+					$numSubOptions = count($allPricing);
+					
+					// for each choice within the option
+					foreach($allPricing as $subOptionId => $priceInfo){
+						
+						// enforce type
+						if(!is_array($priceInfo)){
+							$priceInfo = array();
+						}
+						
+						// increment
+						$optionSubOptionNum++;
+					
+						// core price 
+						$corePriceStr = "";
+						
+						// per year string
+						$perYearStr = "";
+	
+						// option choice - price
+						if(key_exists('price', $priceInfo)){
+							$optionChoicePrice = $priceInfo['price'];
+						} else {
+							$optionChoicePrice = 0;
+						}
+						
+						// option choice - label
+						if(key_exists('label', $priceInfo)){
+							$optionChoiceLabel = $priceInfo['label'];
+						
+						} else {
+							$optionChoiceLabel = "";
+						}
+						
+						// option choice - label type used to format the label
+						if(key_exists('labelType', $priceInfo)){
+							$labelType = $priceInfo['labelType'];
+							
+							switch($labelType){
+								case 'int': // label is an int
+									$labelInt = intval($optionChoiceLabel);
+									$optionChoiceLabel = $numberformat->formatNumberHTML($labelInt, 0);
+								break;
+								case 'float':
+									$labelFloat = floatval($optionChoiceLabel);
+									$optionChoiceLabel = $numberformat->formatNumberHTML($labelFloat, 2);
+								break;	
+							}
+						}
+						
+						// if for core account price, unlimited time period
+						if($optionType == $acType && $optionChoiceLabel == 'unlimited'){
+							$optionItemStr = $this->translate('On-going account');
+							
+							if($optionChoicePrice == 0){
+								$priceStr = $this->translate('free');
+							} else {
+								$pStr = $numberformat->formatNumberHTML($optionChoicePrice, 0);
+								$priceStr = $currencyStr .$pStr .$perYearStr;
+							}
+							
+							// html
+							$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr .":</span> <span class=\"priceDefault\">" .$priceStr ."</span> <span class=\"entitlement\"></span>";
+							$dataLabelStr = $optionItemStr .": " .$priceStr;
+						
+						} else {
+							// if for core account price, yearly time period
+							if($optionType == $acType && $optionChoiceLabel == 'annual'){
+								$optionItemStr = $this->translate('Full account');
+								
+								if($optionChoicePrice ==0){
+									$priceStr = $this->translate('free');
+								} else {
+									$pStr = $numberformat->formatNumberHTML($optionChoicePrice, 0);
+									$priceStr = $currencyStr .$pStr .$perYearStr;
+								}
+								// html
+								$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr .":</span> <span class=\"priceDefault\">" .$priceStr ."</span> <span class=\"entitlement\"></span>";
+								$dataLabelStr = $optionItemStr .": " .$priceStr;
+								
+								// record core account price
+								$acHTMLInfo['corePrice'][$acType] = $optionChoicePrice;
+								
+							} else {
+								// if for core account price, trial
+								if($optionType == $acType && $optionChoiceLabel == 'trial'){
+									$optionItemStr = $this->translate('Trial');
+								
+									if($optionChoicePrice ==0){
+										$priceStr = $this->translate('free');
+									} else {
+										$pStr = $numberformat->formatNumberHTML($optionChoicePrice, 0);
+										$priceStr = $currencyStr .$pStr .$perYearStr;
+									}
+									// html
+									$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr .":</span> <span class=\"priceDefault\">" .$priceStr ."</span> <span class=\"entitlement\"></span>";
+									$dataLabelStr = $optionItemStr .": " .$priceStr;
+								
+									// record core account price
+									$acHTMLInfo['corePrice'][$acType] = $optionChoicePrice;
+									
+								} else {
+						
+									// all other options:
+									$optionItemStr = $optionChoiceLabel;
+									if($optionChoicePrice ==0){
+										$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr ."</span> <span class=\"priceDefault\"></span><span class=\"entitlement\"></span>";
+									} else {
+										$pStr = $numberformat->formatNumberHTML($optionChoicePrice, 0);
+										$priceStr = "+" .$currencyStr .$pStr;
+										$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr ."</span> <span class=\"priceDefault\">(" .$priceStr .")</span> <span class=\"entitlement\"></span>";
+									}
+									// html
+									//$htmlOptionStr = "<span class=\"optionChoiceLabel\">" .$optionItemStr ."</span> (<span class=\"priceDefault\">" .$priceStr ."</span> <span class=\"entitlement\"></span>)";
+									$dataLabelStr = $optionItemStr ." " .$priceStr;
+								}
+								
+							}	
+						}
+						
+						// checked val
+						if($optionSubOptionNum == 1){
+							$checkedStr = "checked=\"checked\"";
+						} else {
+							$checkedStr = "";
+						}
+						
+						if($numSubOptions == 1){ //
+							// clear legend as there are no actual radio button options
+							$legendStr = "";
+							
+							// create as div (not input)
+							$labelStr = "<div class=\"optionAllChoices\">"
+											."<div class=\"non-input\" data-price=\"" .$optionChoicePrice ."\" data-label=\"" .$dataLabelStr ."\" data-suboptionchoice=\"" .$subOptionId ."\">"
+												.$htmlOptionStr
+											."</div>"
+									."</div>"
+									."<div class=\"clearFloats\"></div>";
+						} else { // have choices
+							
+							// create as input element
+							$labelStr = "<label><div class=\"optionAllChoices\">"
+							."<input type=\"radio\" name=\"" .$inputNameStr ."\" class=\"input\" value=\"" .$optionChoicePrice ."\" " .$checkedStr ." data-price=\"" .$optionChoicePrice ."\" data-label=\"" .$dataLabelStr ."\" data-suboptionchoice=\"" .$subOptionId ."\">"
+							.$htmlOptionStr
+							."</div></label>";
+						}
+						
+						
+						// create price and formatting info for account
+						if($optionType == $acType){
+							$dataPriceStr = " data-coreacprice=\"" .$optionChoicePrice ."\"";
+							$dataGroupTypeStr = " data-grouptype=\"" .$groupType ."\"";
+							$dataAllStr = $currencyInfoDataStr .$numFormatDataStr .$dataPriceStr .$dataGroupTypeStr;
+							// record currency and number formattting info
+							$acPriceHTMLInfo[$acType] = $dataAllStr;
+						}
+							
+					
+						// add label
+						$subOptionHTMLStr .= $labelStr;
+					}
+					
+				}
+				// assemble field set html
+				if($numSubOptions == 1){
+					$accountOptionStr = $htmlOpen .$subOptionHTMLStr .$htmlClose;
+				} else {
+					$accountOptionStr .= $htmlOpen .$legendStr .$subOptionHTMLStr .$htmlClose;
+				}
+	
+			} 
+			
+			// add to account html
+			$acOptionHTML[$acType] = $accountOptionStr;
+		}
+	}
+	
+	
+	
+	
+	// key words
+	$words = array();
+	$freeStr = $this->translate('Free');
+	$words['free'] = $freeStr;
+	$pageSettings['html']['acOptions']['words'] = $words;
+	
+?>
+
+
+
+
+<div class="acOptions" id="<?php echo $acOptionsId;?>">
+
+	<div><!--  options -->
+		
+		<?php if(!$loggedIn):?>
+		
+			<?php // FREE account
+	
+			// core currency and formatting data
+			$cpDataStr = "";
+			if(key_exists('user_free', $acPriceHTMLInfo)){
+				$cpDataStr = $acPriceHTMLInfo['user_free'];
+			}
+			?>
+					
+			<div class="option option_1" data-acoption="<?php echo $accountInfoByType['user_free']['id'];?>" <?php echo $cpDataStr;?>><!-- free -->
+				<div>
+					<div class="title opTitle"><?php echo $accountInfoByType['user_free']['name'];?></div>
+				</div>
+				<div class="clearFloats"></div>
+				<div class="info"><?php echo $this->translate('With this account, you have a personal library (where you can keep stuff) and you can rent, buy or subscribe to other peoples\' content. You can\'t publish or share your own content.');?></div>
+				
+							
+				<div class="buttons">
+					<div class="<?php echo $acSelectClass;?>">
+						<div class="<?php echo $pinClass;?>"><?php echo $this->translate('Click to select account');?></div>	
+						<div class="<?php echo $unpinClass;?>" style="display:none"><?php echo $this->translate('Click to deselect');?></div>
+					</div>
+				</div>
+				<div class="clearFloats"></div>
+		
+			</div>
+		<?php endif?>
+		
+		
+		<?php if($user_acTypeId != $accountInfoByType['user_consumer']['id']):?>
+		
+			<?php // CONSUMER account
+			// core currency and formatting data
+			$cpDataStr = "";
+			if(key_exists('user_consumer', $acPriceHTMLInfo)){
+				$cpDataStr = $acPriceHTMLInfo['user_consumer'];
+			}
+			?>
+			
+			<div class="option option_3" data-acoption="<?php echo $accountInfoByType['user_consumer']['id'];?>" <?php echo $cpDataStr;?>><!-- consumer -->
+				<div class="items">
+					<div>
+						<div class="title opTitle"><?php echo $accountInfoByType['user_consumer']['name'];?></div>
+						<div class="price"></div>
+					</div>
+					<div class="clearFloats"></div>
+				
+					<div class="info"><?php echo $this->translate('Share & publish your own content in one or two libraries.');?></div>
+					<div class="info"><?php echo $this->translate('Sell or rent your content, and have paid-for subscribers to your own libraries.');?></div>
+					<div class="info"><?php echo $this->translate('Minimum of 5GB of space for your content.');?></div>		
+				</div><!-- end items -->
+				
+				<div class="buttons">
+					<div class="<?php echo $optionPinClass;?>">
+						<div class="<?php echo $pinClass;?>"><?php echo $this->translate('Click to show free trial offer');?></div>	
+						<div class="<?php echo $unpinClass;?>" style="display:none"><?php echo $this->translate('Click to hide trial offer');?></div>
+					</div>
+					<div class="<?php echo $acSelectClass;?>">
+						<div class="<?php echo $pinClass;?>"><?php echo $this->translate('Click to select account');?></div>	
+						<div class="<?php echo $unpinClass;?>" style="display:none"><?php echo $this->translate('Click to deselect');?></div>
+					</div>
+				</div>
+				
+				<div class="clearFloats"></div>
+				
+				<!--  trial -->
+				<div class="selectOption" style="display:none;"><!-- trial -->
+	
+					<div class="items">
+						<div class="title"><?php echo $this->translate('Try this, for one month, for free');?></div>
+						<div class="info"><?php echo $this->translate('All of the services of the Consumer account with 1 library that you can publish  and 1GB of space.');?></div>
+						<div class="info"><?php echo $this->translate('At the end of the trial period, this account will automatically become a free account if you don\'t want to pay. You do not have to give any payment details.');?></div>
+					</div>
+					
+					<?php 
+						if(key_exists('user_consumer', $acOptionHTML)){
+							echo $acOptionHTML['user_consumer'];
+						} 
+					?>
+					
+					<div class="clearFloats"></div>
+				</div>
+			</div><!-- end option -->
+		<?php  endif?>
+		
+		
+		<?php 
+		// core currency and formatting data
+		$cpDataStr = "";
+		if(key_exists('gp_sme', $acPriceHTMLInfo)){
+			$cpDataStr = $acPriceHTMLInfo['gp_sme'];
+		}
+		?>
+		<div class="option option_4" data-acoption="<?php echo $accountInfoByType['gp_sme']['id'];?>" <?php echo $cpDataStr;?>><!-- SME -->
+			<div class="items">
+				<div>
+					<div class="title opTitle"><?php echo $accountInfoByType['gp_sme']['name'];?></div>
+					<div class="price"></div>
+				</div>
+				<div class="clearFloats"></div>
+				<div class="info"><?php echo $this->translate('Full buying and selling services with an unlimited number of publishable libraries.');?></div>
+				<div class="info"><?php echo $this->translate('Ability to license your content to other byblio users.');?></div>
+				<div class="info "><?php echo $this->translate('Multiple account members, including account administrators, library managers and registered users.');?></div>
+				<div class="info"><?php echo $this->translate('Minimum of 100GB of space for your content.');?></div>
+			</div><!--  end items -->
+			
+			<div class="buttons">
+				<div class="<?php echo $optionPinClass;?>">
+					<div class="<?php echo $pinClass;?>"><?php echo $this->translate('Click to show options');?></div>	
+					<div class="<?php echo $unpinClass;?>" style="display:none"><?php echo $this->translate('Click to hide options');?></div>
+				</div>
+				<div class="<?php echo $acSelectClass;?>">
+					<div class="<?php echo $pinClass;?>"><?php echo $this->translate('Click to select account');?></div>	
+					<div class="<?php echo $unpinClass;?>" style="display:none"><?php echo $this->translate('Click to deselect');?></div>
+				</div>
+			</div>
+			
+			<div class="clearFloats"></div>
+			
+			<div class="selectOption" style="display:none;">
+				
+				<div class="title"><?php echo $this->translate('Number of users in the account'); ?>
+					<span class="subTitle"> <?php echo $this->translate('(you can change these later)'); ?></span>
+				</div>
+				
+				<?php 
+					if(key_exists('gp_sme', $acOptionHTML)){
+						echo $acOptionHTML['gp_sme'];
+					} 
+				?>
+				<div class="clearFloats"></div>
+			</div>
+		</div>
+		
+		
+		
+		
+	</div><!-- end options -->
+	
+	<div class="clearFloats"></div>
+	
+	
+		
+	<div class="clearFloats"></div>
+</div><!-- end accountPricing -->
+
+	

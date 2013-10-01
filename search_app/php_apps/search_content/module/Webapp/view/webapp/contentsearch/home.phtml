@@ -1,0 +1,197 @@
+<?php
+
+/**
+ * Byblio
+ * Search, webApp
+ * Test page (visual output of) web app interaction with search engine
+ * 
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+
+	// style sheet
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/webApp/webApp-test.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+
+	// javascript
+	$this->headScript()->appendFile($this->basePath(PUBLIC_FOLDER) . '/js/webApp/webAppTest.1.0.js', 'text/javascript'); // page functionality
+	
+	// search form
+	$searchFormNameStr = "";
+	$searchForm = $this->searchForm;
+	if($searchForm){
+		// form name
+		$searchFormNameStr = $searchForm->formName;
+	} else {
+		$searchForm = array();
+	}
+	
+	
+	// ** info for webApp.js:
+	if(!is_array($this->pageSettings)){
+		$pageSettings = array();
+	} else {
+		$pageSettings = $this->pageSettings;
+	}
+	// place holder. Note: page settings passed by reference
+	$this->placeholder('pageSettings')->pageSettings = &$pageSettings;
+	
+	// html info:
+	if(!key_exists('html', $pageSettings)){
+		$pageSettings['html'] = array();
+	}
+	
+	
+	// search form html info
+	$jsSearchForm = array();
+	
+	// id list
+	$idList = array();
+	$searchPanelId = 'searchFormPanel';
+	$idList['searchPanel'] = $searchPanelId; // form panel
+	$searchRequestId = 'searchRequestPanel'; 
+	$idList['requestPanel'] = $searchRequestId; // panel to display request
+	$searchResultsId = 'searchResultsPanel';
+	$idList['resultsPanel'] = $searchResultsId; //. panel to display results of request
+	$jsSearchForm['idList'] = $idList;
+	
+	
+	// class list
+	if(is_array($searchForm->classList)){
+		$classList = $searchForm->classList;
+	} else {
+		$classList = array();
+	}
+	$classList['info'] = 'info';
+	$classList['progress'] = 'progress';
+	$classList['posted'] = 'posted';
+	$classList['received'] = 'received';
+	$classList['interpretted'] = 'interpretted';
+	$jsSearchForm['classList'] = $classList;
+	
+	// element name list
+	if(is_array($searchForm->elementList)){
+		$elementList = $searchForm->elementList;
+	} else {
+		$elementList = array();
+	}
+	$jsSearchForm['elementList'] = $elementList;
+	
+	// form name
+	$jsSearchForm['formName'] = $searchFormNameStr;
+	
+	// data tags
+	$dataList = array();
+	$dataList['optionType'] = 'optiontype';
+	$jsSearchForm['dataList'] = $dataList;
+	
+	// ajax info
+	$ajaxInfo = array();
+	if($this->ajaxInfo){
+		$ajaxInfo = $this->ajaxInfo;
+	}
+	$pageSettings['ajax'] = $ajaxInfo;
+	
+	// record search form info
+	$pageSettings['html']['searchForm'] = $jsSearchForm;
+
+
+	// key words
+	$keyWords = $this->keyWords;
+	if(!is_array($keyWords)){
+		$keyWords = array();
+	}
+	$pageSettings['keyWords'] = $keyWords;
+	
+?>
+
+	
+<div class="webApp_test">
+
+	<div class="pageTitle"><?php echo $this->translate('Web app content search (test)');?></div>
+	
+	<div class="pageBorder">
+	
+		<div class="row1">
+			<!-- content search request input -->
+			<div class="searchPanel" id="<?php echo $searchPanelId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('User\'s search request');?></div>
+				
+				<!--  form -->
+				<?php
+				echo $this->partial('contentSearchForm', array('form'=>$searchForm));
+				?>
+			
+			</div> <!-- end search form panel -->
+			
+			<!-- results, loaded by javascript -->
+			<div class="resultsPanel" id="<?php echo $searchResultsId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('Return results');?></div>
+			
+				<!-- info -->
+				<div class="info"></div>
+				
+				<!-- progress indicator -->
+				<div class="progress"></div>
+				
+			</div><!--  end results panel -->
+			
+			
+		</div><!-- end row1 -->
+		
+		<div class="clearFloats"></div>
+		
+		<div class="row2">
+		
+			<!-- request, loaded by javascript -->
+			<div class="requestPanel" id="<?php echo $searchRequestId;?>">
+			
+				<div class="sectionTitle"><?php echo $this->translate('HTTP post request');?></div>
+				
+				<div class="allInfo">
+					<div class="posted">
+						<div class="heading"><?php echo $this->translate('Posted');?></div>
+						<div class="info">If you can see this, the javascript engine is not running.</div>
+					</div>
+					<div class="received">
+						<div class="heading"><?php echo $this->translate('Received');?></div>
+						<div class="info"></div>
+					</div>
+					<div class="interpretted">
+						<div class="heading"><?php echo $this->translate('Interpretted as');?></div>
+						<div class="info"></div>
+					</div>
+				</div>
+				<div class="clearFloats"></div>
+			
+			</div><!--  end request panel -->
+			
+			
+		</div><!--  end row2 -->
+		
+	</div><!--  end pageBorder -->
+	
+</div><!-- end webApp -->
+	
+	
+	
+	
+	
+<?php	
+	// page settings for js
+	$pageSettings = $this->placeholder('pageSettings')->pageSettings;
+	$pageSettingsJson = json_encode($pageSettings);
+	
+	// echo out
+	$script = "<script type=\"text/javascript\">var ByblioSearchInfo =" .$pageSettingsJson .";</script>";
+	echo $script;
+?>

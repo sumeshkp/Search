@@ -1,0 +1,105 @@
+<?php
+	/**
+	 * Byblio
+	 *  module/useraccount/view/useraccount/newaccountactivationemail/home
+	 * user request new account activation email;
+	 * @copyright 2013 Byblio.com
+	 * @author: Paul A. Oliver
+	 *
+	 */
+
+	
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/useraccount.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	// flags
+	$emailSent =  $this->emailSent;
+	$alreadyActivated =  $this->alreadyActivated;
+	$emailNotInUse =  $this->emailNotInUse;
+	
+	// email entered (cleaned)
+	$requestEmail = $this->requestEmail;
+
+	// title
+	$title = $this->translate('Account activation');
+	
+	// form
+	$requestForm = $this->newEmailForm;
+	
+?>
+
+<div class="newActivationEmail">
+	<div class="pageTitle"><?php echo $this->translate('Activate your account')?></div>
+
+	<div class="pageBorder">
+	
+		<div class="col_1">
+			<div class="intro">
+				<h2><?php echo $this->translate('Lost your activation email? - don\'t worry')?></h2>
+				<p><?php echo $this->translate('To make sure that someone else is not hijacking your email address, we ask that you click on the link in the activaion email we sent to you when you registered.'); ?></p> 
+				<p><?php echo $this->translate('If that link is not working (Oops!), or you\'ve lost the email, simply enter your email address here and we\'ll send you another activation email.');?></p> 
+			</div>
+		</div><!--  end col_1 -->
+		
+		<div class="col_2"><!-- request new activation email form -->
+				<div class="intro">
+					<h2><?php echo $this->translate('New activation email')?></h2>
+					<p><?php echo $this->translate('Please enter your email address below (the one that you registered with). We will send you a new activation email straight away!')?></p>
+				</div>
+				
+				<div class="form">
+					<?php 
+						// sign up form, 
+						echo $this->partial('newAccountActivationForm', array('form'=>$requestForm));
+					?>
+				</div>
+			
+				<div class="info">
+					<p><?php echo $this->translate('Alternatively...');?></p>
+					<div class="links">
+						<div class="link_goto">
+							<a href="<?php echo $this->url('useraccount-login');?> ">
+							<?php echo $this->translate('Take me to the log in page (I\'m already active!)');?>
+							</a>	
+			   			</div>
+			   			<div class="link_goto">
+		   					<a href="<?php echo $this->url('home');?>"><?php echo $this->translate('Take me to the home page');?></a>
+		   				</div>
+			   			<div class="link_goto">
+			   				<a href="<?php echo $this->url('library', array('action'=>'public'));?>"><?php echo $this->translate('To the public libraries! (no need to sign up)');?></a>
+			   			</div>
+						
+			   		</div>
+				</div>
+		</div> <!--  end col_2 -->
+
+		<div class="clearFloats"></div>
+		
+		<!-- dialogue boxes -->
+		<?php 
+			if($emailSent){
+				// inform user
+				echo $this->partial('dialogueNAAE_emailSent', array('email'=>$requestEmail));
+			}
+			
+			if($alreadyActivated){
+				// inform user
+				echo $this->partial('dialogueNAAE_acAlreadyActive', array('email'=>$requestEmail));
+			}
+			
+			if($emailNotInUse){
+				// inform user
+				echo $this->partial('dialogueNAAE_emailNotInUse', array('email'=>$requestEmail));
+			}
+			
+			
+		?>
+	</div>
+</div>

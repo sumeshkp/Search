@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * Byblio
+ * partial view helper, dialogue box, user requested new password - email sent
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+	// email in use
+	$email = $this->email;
+	
+	// title
+	$titleStr = $this->translate('On it\'s way');
+
+?>
+
+<!--  html -->
+<div style="{display:none;}"> <!-- wrap in hidden div to stop fouc -->
+	<div id="dialogue-message" class="dialogue-message" title="<?php echo $titleStr; ?>">
+		<div class="message">
+			<p><?php echo $this->translate('We have sent a new password email to') ." " .$email .". " .$this->translate('You will need to follow the link in the email to activate your new password.');?></p>
+			<p><?php echo $this->translate('Where would you like to go to now?'); ?></p>
+			
+			<div class="links">
+				<div class="link_goto">
+	   				<a href="<?php echo $this->url('home');?>"><?php echo $this->translate('Byblio home page');?></a>
+	   			</div>
+				<div class="link_goto">
+	   				<a href="<?php echo $this->url('library', array('action'=>'public'));?>"><?php echo $this->translate('Public libraries');?></a>
+	   			</div>
+				
+	   		</div>
+		
+		</div>
+	</div>
+</div>
+
+<!-- script to activate -->
+<script>
+
+	// css to hide close button, set title colour, set link colour
+	var closeStr = ".ui-dialog-titlebar-close{display: none;}";
+	var allCSSStr = "<style>" +closeStr +"</style>"
+	// write csss
+	document.write(allCSSStr);
+
+	
+	// open dialogue box
+	// NOTE: important to blur the links and buttons on open (else they will be highlighted)
+	
+	$(function(){
+	    $("#dialogue-message").dialog({
+	        modal: true,
+	        buttons: {
+		        Ok: function() {
+		          $(this).dialog( "close" );
+		        }
+	      	},
+	     	draggable: false,
+	     	resizable: false,
+	     	open: function(event, ui){ // blur
+	     		$('.ui-dialog :button').blur();
+	     		$('.ui-dialog a').blur();
+	        },
+	        position: {my: 'center center', at: 'center center-50', of: window},
+	        dialogClass: 'signup', // page class
+	    });
+	});
+
+
+  
+</script>

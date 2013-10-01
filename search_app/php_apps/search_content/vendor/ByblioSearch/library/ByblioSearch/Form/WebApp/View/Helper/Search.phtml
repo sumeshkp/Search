@@ -1,0 +1,139 @@
+<?php
+
+/**
+ * Byblio.
+ * Search, Web app
+ * partial view helper to format web app search form
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// escape if no form
+	if(!$this->form){
+		return;
+	}
+	
+	// ref form
+	$form = $this->form;
+	
+	// prepare
+	$form->prepare();
+	
+	// ref input filter and validator
+	//$filter = $form->getInputFilter();
+	
+	// opening html
+	$openStr = "<div class=\"search_form\">";
+	$formOpenStr = $this->form()->openTag($form);
+	
+	// form name
+	$formNameStr = $this->formRow($form->get('formname'));
+	
+	// csrf
+	$csrfStr = $this->formRow($form->get('searchCsrf'));
+	
+	// ip Address
+	$ipAddressStr = $this->formRow($form->get('webapp-search-ipAddress'));
+	
+	// username
+	$usernameStr = $this->formRow($form->get('webapp-search-username'));
+	
+	// query div
+	$queryStr = "<div class=\"row\"><div class=\"query\">"
+			.$this->formRow($form->get('webapp-search-query'))
+			."</div></div>";
+	
+	
+	// facet - use
+	$facetUseStr = "<div class=\"use\">"
+			."<div class=\"label\">" .$this->translate('Use facets in search query') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-use'))
+			."</div>";
+	
+	// facet - author
+	$facetAuthorsStr = "<div class=\"row\"><div class=\"authors\">"
+			."<div class=\"label\">" .$this->translate('Authors') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-author'))
+			."</div></div>";
+	
+	// facet - title
+	$facetTitleStr = "<div class=\"row\"><div class=\"title\">"
+			."<div class=\"label\">" .$this->translate('Title') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-title'))
+			."</div></div>";
+	
+	
+	// facet - publisher
+	$facetPublishersStr = "<div class=\"row\"><div class=\"publishers\">"
+			."<div class=\"label\">" .$this->translate('Publishers') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-publisher'))
+			."</div></div>";
+	
+	// facet - summary
+	$facetSummaryStr = "<div class=\"row\"><div class=\"summary\">"
+			."<div class=\"label\">" .$this->translate('Summary') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-summary'))
+			."</div></div>";
+	
+	// facet - genre
+	$facetGenreStr = "<div class=\"row\"><div class=\"genre\">"
+			."<div class=\"label\">" .$this->translate('Genre') ."</div>"
+			.$this->formRow($form->get('webapp-search-facet-genre'))
+			."</div></div>";
+	
+	// facet - year of publication
+	$facetYoPStr = "<div class=\"yop\">"
+			.$this->formRow($form->get('webapp-search-facet-yop'))
+			."</div>";
+	
+	
+	// facet - month of publication
+	$facetMoPStr = "<div class=\"mop\">"
+			.$this->formRow($form->get('webapp-search-facet-mop'))
+			."</div>";
+	
+	$allTimeStr = "<div class=\"row\">"
+			.$facetYoPStr
+			.$facetMoPStr
+			."</div>"
+			."<div class=\"clearFloats\"></div>";
+			
+	
+	// facets heading
+	$facetsHeadingStr = "<div class=\"facetHeading\">"
+			."<div class=\"heading\">" .$this->translate('Search facets') ."</div>"
+			.$facetUseStr
+			."<div class=\"clearFloats\"></div>"
+			."</div>";
+	
+	// all facets
+	$allFacets = "<div class=\"facets\">"
+			.$facetsHeadingStr
+			.$facetTitleStr
+			.$facetSummaryStr
+			.$facetAuthorsStr
+			.$facetPublishersStr
+			.$facetGenreStr
+			.$allTimeStr
+			."</div>";
+			
+	
+	
+	
+	// submit div
+	$submitStr = "<div class=\"row\"><div class=\"submit\">"
+			.$this->formRow($form->get('webapp-search-submit'))
+			."</div></div>";
+	
+	
+	// close tag
+	$formCloseStr = $this->form()->closeTag();
+	
+	// assemble
+	$formStr = $openStr .$formOpenStr .$csrfStr .$formNameStr  .$ipAddressStr .$usernameStr .$queryStr .$allFacets .$submitStr .$formCloseStr ."</div>";
+	
+	// echo
+	echo $formStr;
+	
+?>

@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Byblio
+ * Useraccount, User home page
+ * view partial
+ * 
+ * @copyright 2013 Byblio.com
+ * @author: Paul A. Oliver
+ *
+ */
+
+	// info
+	$loggedIn = $this->loggedIn;
+	$userInfo = $this->userInfo;
+	$UIInfo = $this->UIInfo;
+	$pageInfo = $this->pageInfo;
+
+	// app service manager
+	$sm = $this->getHelperPluginManager()->getServiceLocator();
+	
+	// css core folder
+	$css_coreFolder = $sm->get('css_coreFolder');
+	
+	// custom css info
+	$userStyleInfo = "";
+	
+	if(key_exists('styleInfo', $UIInfo)){
+		$userStyleInfo = $UIInfo['styleInfo'];
+		
+		// test
+		//$userStyleInfo = ".pageTitle{text-decoration:underline;}";
+		
+		// inject into head script
+		$this->headStyle()->setStyle($userStyleInfo);
+	}
+	
+	// style sheets
+	$cssPath = $this->basePath(PUBLIC_FOLDER) . "/css/" .$css_coreFolder ."/useraccount/userhome.1.0.css";
+	$this->headLink()->appendStylesheet($cssPath);
+	
+	
+	
+	
+	
+?>
+
+<div class="userHome">
+
+	<div class="pageTitle"><?php echo $this->translate('Your home page')?></div>
+	
+		<div class="pageBorder">
+		
+			
+	
+		<div class="clearFloats"></div>
+			
+			
+			
+	</div><!-- end pageBorder -->
+</div>
